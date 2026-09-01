@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Egyptian Baccalaureate English Curriculum: Professional Training & Interactive Course Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Top Progress Bar -->
+    <div id="scroll-progress-container">
+        <div id="scroll-progress-bar"></div>
+    </div>
+
+    <!-- Lightbox / Modal for Book Clips & Infographics with Dedicated Zooming Controls -->
+    <div id="image-modal-lightbox" class="image-modal-overlay" onclick="closeImageModal()">
+        <div class="image-modal-content" onclick="event.stopPropagation()">
+            <!-- Dedicated Zoom Toolbar -->
+            <div class="image-modal-toolbar">
+                <div class="image-modal-zoom-controls">
+                    <button id="btn-fit-width" class="modal-zoom-btn" onclick="toggleModalFitWidth()" title="Expand Image to Full Page Width">
+                        <i class="fa-solid fa-arrows-left-right"></i> <span>Fit Width</span>
+                    </button>
+                    <button class="modal-zoom-btn" onclick="zoomModalImage(-0.25)" title="Zoom Out (-)">
+                        <i class="fa-solid fa-magnifying-glass-minus"></i>
+                    </button>
+                    <span id="modal-zoom-display" class="modal-zoom-indicator">100%</span>
+                    <button class="modal-zoom-btn" onclick="zoomModalImage(0.25)" title="Zoom In (+)">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                    </button>
+                    <button class="modal-zoom-btn" onclick="resetModalImageZoom()" title="Reset Zoom (100%)">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                </div>
+                <button class="image-modal-close" onclick="closeImageModal()" title="Close Pop-up (Esc)">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <!-- Image Viewport -->
+            <div class="image-modal-viewport" id="image-modal-viewport">
+                <img id="image-modal-img" src="" alt="Infographic / Book Clip Preview">
+            </div>
+            <div id="image-modal-caption" class="image-modal-caption"></div>
+        </div>
+    </div>
+
+    <!-- Floating TTS Pronunciation Tool for Selected Text -->
+    <button id="tts-floating-btn" class="tts-floating-btn" onmousedown="speakSelectedText(event)" title="Pronounce selected text (Shortcut: Alt+P)">
+        <i class="fa-solid fa-volume-high"></i> <span>TTS</span>
+    </button>
+
+    <!-- Floating Single Restore Button (shown when unified header is hidden) -->
+    <div class="floating-header-restore-container">
+        <button id="btn-show-unified-header" class="floating-header-restore-btn" onclick="toggleUnifiedHeader()" title="Show Banner & Toolbar (Shortcut: H)">
+            <i class="fa-solid fa-chevron-down"></i>
+            <span>Show Banner & Tools</span>
+            <kbd>H</kbd>
+        </button>
+    </div>
+
+    <!-- JOINT / UNIFIED TOP HEADER & TOOLBAR -->
+    <header class="unified-portal-header" id="unified-portal-header">
+        <div class="unified-header-container">
+            <!-- Top Row: Branding & Integrated Utilities -->
+            <div class="unified-header-top-row">
+                <div class="unified-brand-area">
+                    <div class="brand-logo" title="Egyptian Baccalaureate English Portal">
+                        <i class="fa-solid fa-book-atlas"></i>
+                    </div>
+                    <div class="brand-text">
+                        <h1>Egyptian Baccalaureate <span>2026 / 2027</span></h1>
+                        <p class="subtitle">Secondary 2nd Year (Grade 11) • English Professional Training & Practice Portal</p>
+                    </div>
+                </div>
+
+                <!-- Right: Integrated Tools & Single Collapse Button -->
+                <div class="unified-tools-area">
+                    <!-- TTS Quick Pronunciation -->
+                    <button class="tool-btn" id="header-tts-btn" onclick="speakCurrentOrSelectedText()" title="Pronounce Selected Text (Shortcut: Alt+P)">
+                        <i class="fa-solid fa-volume-high"></i> <span>TTS</span>
+                    </button>
+
+                    <!-- Voice Speed Control -->
+                    <div class="tts-speed-control-group" title="TTS Voice Speed / Rate">
+                        <i class="fa-solid fa-gauge-high"></i>
+                        <select id="tts-voice-speed" class="tts-speed-select" onchange="changeTTSVoiceSpeed(this.value)">
+                            <option value="0.75">0.75x</option>
+                            <option value="0.9">0.9x</option>
+                            <option value="1.0" selected>1.0x (Normal)</option>
+                            <option value="1.2">1.2x</option>
+                            <option value="1.5">1.5x</option>
+                        </select>
+                    </div>
+
+                    <span class="tool-divider"></span>
+
+                    <!-- Bold / Normal Text Weight Toggle -->
+                    <button class="tool-btn" id="btn-toggle-bold" onclick="toggleFontWeight()" title="Toggle Bold / Normal Weight (B/N)">
+                        <i class="fa-solid fa-bold"></i> <span id="bold-label">B/N</span>
+                    </button>
+
+                    <span class="tool-divider"></span>
+
+                    <!-- Zoom Controls -->
+                    <div class="tool-zoom-group">
+                        <button class="tool-btn-icon" onclick="zoomOut()" title="Zoom Out (-)"><i class="fa-solid fa-minus"></i></button>
+                        <span class="zoom-indicator" id="zoom-level-display" title="Current Zoom">100%</span>
+                        <button class="tool-btn-icon" onclick="zoomIn()" title="Zoom In (+)"><i class="fa-solid fa-plus"></i></button>
+                        <button class="tool-btn-icon" onclick="resetZoom()" title="Reset Zoom (100%)"><i class="fa-solid fa-rotate-left"></i></button>
+                    </div>
+
+                    <span class="tool-divider"></span>
+
+                    <!-- Fullscreen & Theme -->
+                    <button class="tool-btn-icon" onclick="toggleFullScreen()" title="Full Screen [F11]"><i class="fa-solid fa-expand"></i></button>
+                    <button class="tool-btn-icon" id="theme-toggle" title="Toggle Dark/Light Theme"><i class="fa-solid fa-moon"></i></button>
+
+                    <span class="tool-divider"></span>
+
+                    <!-- Print Action -->
+                    <button class="tool-btn-icon" onclick="window.print()" title="Print Page / Save PDF"><i class="fa-solid fa-print"></i></button>
+
+                    <span class="tool-divider"></span>
+
+                    <!-- THE ONE SMALL BUTTON TO HIDE / DISPLAY BOTH -->
+                    <button class="btn-hide-unified-header" id="btn-hide-unified-header" onclick="toggleUnifiedHeader()" title="Hide Toolbar & Tabs (Shortcut: H)">
+                        <i class="fa-solid fa-chevron-up"></i>
+                        <span>Hide</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Integrated Master 3-Tab Bar in Toolbar -->
+            <nav class="master-tab-nav" id="master-tab-nav">
+                <button class="master-tab-btn active" onclick="switchMasterTab(0)">
+                    <i class="fa-solid fa-book-open"></i>
+                    <div class="tab-label-group">
+                        <span class="tab-title">1. Introduction & Vision</span>
+                        <span class="tab-sublabel">Orientation, Foundations & 74 Slides</span>
+                    </div>
+                </button>
+                <button class="master-tab-btn" onclick="switchMasterTab(1)">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <div class="tab-label-group">
+                        <span class="tab-title">2. Lesson Planning</span>
+                        <span class="tab-sublabel">5-Period Framework & Unit 1.1 Suite</span>
+                    </div>
+                </button>
+                <button class="master-tab-btn" onclick="switchMasterTab(2)">
+                    <i class="fa-solid fa-dragon"></i>
+                    <div class="tab-label-group">
+                        <span class="tab-title">3. Teaching the Novel</span>
+                        <span class="tab-sublabel">The Lost World • Infographics & Drills</span>
+                    </div>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-content">
+
+        <!-- =========================================================================
+             TAB 1: INTRODUCTION & VISION (المقدمة والرؤية والتوجهات)
+             ========================================================================= -->
+        <div id="master-tab-0" class="master-tab-panel active">
+            
+            <!-- Hero Section -->
+            <section id="hero" class="hero-section">
+                <div class="hero-content">
+                    <div class="badge-pill">
+                        <span class="pulse-dot"></span> Ministry of Education & Technical Education • General English Supervision
+                    </div>
+                    <h2>The Inquiring Educator: Transforming Secondary English into an Arena for Critical Thinking, Evidence & Authentic Inquiry 🌟</h2>
+                    <p>
+                        A comprehensive, interactive master training portal unpacking the philosophy of the new Egyptian Baccalaureate English curriculum (2nd Year Secondary / Grade 11). Fully grounded in international benchmarks (IB, Vygotsky, Erickson) and synthesized from the official 74-slide ministerial presentation, Student Textbook Units (1–5), the adapted novel <em>The Lost World</em>, and standardized JRE+ Lesson Plan frameworks.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat-card">
+                            <div class="stat-num">74</div>
+                            <div class="stat-label">Original Presentation Slides</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-num">5</div>
+                            <div class="stat-label">Weekly Inquiry Periods</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-num">JRE+</div>
+                            <div class="stat-label">Justify – Reason – Evidence Triad</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-num">70</div>
+                            <div class="stat-label">Instant-Feedback MCQs</div>
+                        </div>
+                    </div>
+                    <div class="hero-meta-box">
+                        <span><i class="fa-solid fa-user-tie"></i> Patronage: H.E. Dr. Mohamed Abdel-Latif (Minister of Education) • Dr. Hala Abdel Salam • Prof. Dr. Alaa Gouda</span>
+                        <span><i class="fa-solid fa-location-dot"></i> General English Supervision – Kafr El-Sheikh Directorate • NCEEE Assessment Framework</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 0: Official Orientation Slides Side-Scrolling Carousel -->
+            <section id="orientation-slides" class="intro-slides-section">
+                <div class="slides-slider-container">
+                    <div class="slides-slider-header">
+                        <div class="slides-slider-title">
+                            <i class="fa-solid fa-images"></i>
+                            <span>Ministerial Presentation Slides & Orientation Guide (2026/2027)</span>
+                        </div>
+                        <div class="slides-slider-nav">
+                            <span class="slide-counter-badge" id="intro-slide-counter">Slide 1 / 6</span>
+                            <button class="slide-nav-btn" onclick="slideIntroImages(-1)" title="Previous Slide (Left Arrow)">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+                            <button class="slide-nav-btn" onclick="slideIntroImages(1)" title="Next Slide (Right Arrow)">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                            <button class="slide-autoplay-btn playing" id="btn-slide-autoplay" onclick="toggleIntroSlideAutoplay()" title="Toggle Auto-Scroll & Loop">
+                                <i class="fa-solid fa-pause"></i> Auto-Scrolling
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Side-Scrolling Track Container -->
+                    <div class="slides-scroll-wrapper" id="slides-scroll-wrapper">
+                        <div class="slides-track" id="slides-track">
+                            <!-- Slide 1 -->
+                            <div class="slide-card" onclick="openImageModal('resources/intro_slide1.png', 'Slide 1: نظام البكالوريا المصرية - رؤية جديدة لتطوير التعليم الثانوي 2026/2027')">
+                                <div class="slide-img-box">
+                                    <img src="resources/intro_slide1.png" alt="Slide 1: نظام البكالوريا المصرية">
+                                    <div class="slide-overlay-tag"><i class="fa-solid fa-maximize"></i> Click to Enlarge / Zoom</div>
+                                </div>
+                                <div class="slide-info">
+                                    <h4>١. نظام البكالوريا المصرية</h4>
+                                    <p>رؤية جديدة لتطوير التعليم الثانوي - العام الدراسي 2026 / 2027 م</p>
+                                </div>
+                            </div>
+
+                            <!-- Slide 2 -->
+                            <div class="slide-card" onclick="openImageModal('resources/intro_slide2.png', 'Slide 2: رعاية القيادات التعليمية والوزارة والتوجيه العام')">
+                                <div class="slide-img-box">
+                                    <img src="resources/intro_slide2.png" alt="Slide 2: رعاية القيادات التعليمية">
+                                    <div class="slide-overlay-tag"><i class="fa-solid fa-maximize"></i> Click to Enlarge / Zoom</div>
+                                </div>
+                                <div class="slide-info">
+                                    <h4>٢. رعاية القيادات التعليمية</h4>
+                                    <p>تحت رعاية وزير التربية والتعليم والتعليم الفني والإدارة المركزية وتوجيه عام اللغة الإنجليزية</p>
+                                </div>
+                            </div>
+
+                            <!-- Slide 3 -->
+                            <div class="slide-card" onclick="openImageModal('resources/intro_slide3.png', 'Slide 3: القيادات المشرفة على البرنامج التدريبي والتطوير')">
+                                <div class="slide-img-box">
+                                    <img src="resources/intro_slide3.png" alt="Slide 3: القيادات المشرفة">
+                                    <div class="slide-overlay-tag"><i class="fa-solid fa-maximize"></i> Click to Enlarge / Zoom</div>
+                                </div>
+                                <div class="slide-info">
+                                    <h4>٣. قيادات التدريب والتوجيه</h4>
+                                    <p>القيادات التربوية المشرفة على تدريب وتأهيل معلمي المرحلة الثانوية</p>
+                                </div>
+                            </div>
+
+                            <!-- Slide 4 -->
+                            <div class="slide-card" onclick="openImageModal('resources/intro_slide4.png', 'Slide 4: الجلسة الأولى - قواعد العمل وتوقعات المشاركين')">
+                                <div class="slide-img-box">
+                                    <img src="resources/intro_slide4.png" alt="Slide 4: الجلسة الأولى - قواعد العمل وتوقعات المشاركين">
+                                    <div class="slide-overlay-tag"><i class="fa-solid fa-maximize"></i> Click to Enlarge / Zoom</div>
+                                </div>
+                                <div class="slide-info">
+                                    <h4>٤. الجلسة الأولى: قواعد العمل</h4>
+                                    <p>قواعد العمل وتوقعات المشاركين • زمن التنفيذ: 5 دقائق</p>
+                                </div>
+                            </div>
+
+                            <!-- Slide 5 -->
+                            <div class="slide-card" onclick="openImageModal('resources/intro_slide6.png', 'Slide 5: Session One – Work Rules and Participant Expectations')">
+                                <div class="slide-img-box">
+                                    <img src="resources/intro_slide6.png" alt="Slide 5: Session One - Work Rules and Participant Expectations">
+                                    <div class="slide-overlay-tag"><i class="fa-solid fa-maximize"></i> Click to Enlarge / Zoom</div>
+                                </div>
+                                <div class="slide-info">
+                                    <h4>5. Session One: Work Rules</h4>
+                                    <p>Session One • Work Rules and Participant Expectations (Duration: 5 min)</p>
+                                </div>
+                            </div>
+
+                            <!-- Slide 6 -->
+                            <div class="slide-card" onclick="openImageModal('resources/intro_slide5.png', 'Slide 6: 9 Work Rules & Participant Expectations Details')">
+                                <div class="slide-img-box">
+                                    <img src="resources/intro_slide5.png" alt="Slide 6: Work Rules and Participant Expectations List">
+                                    <div class="slide-overlay-tag"><i class="fa-solid fa-maximize"></i> Click to Enlarge / Zoom</div>
+                                </div>
+                                <div class="slide-info">
+                                    <h4>6. Rules Breakdown (1–9)</h4>
+                                    <p>Punctuality, active participation, attentive listening, collaboration & avoiding distractions</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide Dots Pagination -->
+                    <div class="slides-pagination" id="slides-pagination">
+                        <button class="slide-dot active" onclick="goToIntroSlide(0)" title="Slide 1"></button>
+                        <button class="slide-dot" onclick="goToIntroSlide(1)" title="Slide 2"></button>
+                        <button class="slide-dot" onclick="goToIntroSlide(2)" title="Slide 3"></button>
+                        <button class="slide-dot" onclick="goToIntroSlide(3)" title="Slide 4"></button>
+                        <button class="slide-dot" onclick="goToIntroSlide(4)" title="Slide 5"></button>
+                        <button class="slide-dot" onclick="goToIntroSlide(5)" title="Slide 6"></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- WELCOMING & ENCOURAGING EDUCATORS MESSAGE -->
+            <section class="welcome-educators-section">
+                <div class="welcome-educators-card">
+                    <div class="welcome-header-box">
+                        <div class="welcome-title-group">
+                            <h3><i class="fa-solid fa-sparkles"></i> Welcome, Inspiring Educators! • أهلاً بكم زملاءنا وبناة المستقبل</h3>
+                            <p class="welcome-subtitle">
+                                Welcome to the official Egyptian Baccalaureate (2026/2027) professional development arena. Together, we are leading an educational renaissance—transforming secondary English classrooms into vibrant hubs of intellectual curiosity, rigorous debate, and evidence-based inquiry.
+                            </p>
+                        </div>
+                        <span class="welcome-pill-badge">
+                            <i class="fa-solid fa-graduation-cap"></i> Secondary English Leadership 2026/27
+                        </span>
+                    </div>
+
+                    <!-- 3 Inspiring Pillars -->
+                    <div class="welcome-pillars-grid">
+                        <div class="welcome-pillar-card">
+                            <div class="pillar-icon-title">
+                                <div class="pillar-icon-box"><i class="fa-solid fa-lightbulb"></i></div>
+                                <h4>1. From Memorizing to Inquiring</h4>
+                            </div>
+                            <p>
+                                We empower students not merely to memorize word lists or grammar formulas, but to discover meaning through context, analyze complex issues, and question evidence critically.
+                            </p>
+                        </div>
+
+                        <div class="welcome-pillar-card">
+                            <div class="pillar-icon-title">
+                                <div class="pillar-icon-box"><i class="fa-solid fa-comments"></i></div>
+                                <h4>2. Teaching Through English</h4>
+                            </div>
+                            <p>
+                                Language becomes our vehicle for genuine cognition, media literacy, and global communication—preparing Egyptian youth to articulate reasoned perspectives with confidence.
+                            </p>
+                        </div>
+
+                        <div class="welcome-pillar-card">
+                            <div class="pillar-icon-title">
+                                <div class="pillar-icon-box"><i class="fa-solid fa-award"></i></div>
+                                <h4>3. The Educator as Master Facilitator</h4>
+                            </div>
+                            <p>
+                                Your pedagogical dedication, creative facilitation, and high expectations are the driving engine of Egypt Vision 2030 in every secondary classroom.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Encouraging Motivational Banner / Motto -->
+                    <div class="welcome-motto-box">
+                        <div class="welcome-motto-text">
+                            <i class="fa-solid fa-quote-left"></i>
+                            <span>"Every classroom discussion is an arena for critical thinking, and every student's voice is a pathway to discovery."</span>
+                        </div>
+                        <div class="welcome-arabic-motto">
+                            «أنتم تصنعون الفارق الحقيقي.. معاً نحو جيل مفكر ومبدع ومنافس عالمياً»
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CURRICULUM PHILOSOPHY & THEORETICAL FOUNDATIONS -->
+            <section id="overview" class="content-section">
+                <div class="section-header">
+                    <div class="section-tag"><i class="fa-solid fa-lightbulb"></i> Foundation Module</div>
+                    <h2>Curriculum Philosophy & Theoretical Foundations</h2>
+                    <p>"English is no longer a subject to be memorized, but rather a tool for thinking, analyzing, and communicating."</p>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card card-featured">
+                        <div class="card-icon"><i class="fa-solid fa-flag"></i></div>
+                        <h3>Egypt Vision 2030 & Secondary Transformation 🇪🇬</h3>
+                        <p>
+                            Aligned with Egypt Vision 2030, the new secondary curriculum fosters an autonomous, creative, and critical thinker capable of global engagement:
+                        </p>
+                        <ul class="styled-list">
+                            <li><strong>Education Quality:</strong> Elevating secondary education to align with International Baccalaureate (IB) benchmarks.</li>
+                            <li><strong>Inclusion & Equity:</strong> Ensuring equitable access to higher-order cognitive development across all societal segments.</li>
+                            <li><strong>Digital Transformation:</strong> Embedding intentional digital literacy and media criticism within daily learning.</li>
+                            <li><strong>Teacher Development:</strong> Evolving the educator from an instructional lecturer into an inquiry facilitator and discovery guide.</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon"><i class="fa-solid fa-atom"></i></div>
+                        <h3>Grounded Research & Applied Linguistics</h3>
+                        <div class="accordion">
+                            <div class="accordion-item active">
+                                <button class="accordion-header">
+                                    <span><i class="fa-solid fa-cube"></i> Constructivism & Sociocultural Theory (Vygotsky & Bruner)</span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                                <div class="accordion-body">
+                                    Language is acquired most effectively when embedded in authentic, inquiry-driven contexts. Drawing on Vygotsky's Zone of Proximal Development (ZPD) and Bruner's scaffolding, learning builds progressively from prior knowledge to complex academic reasoning.
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <button class="accordion-header">
+                                    <span><i class="fa-solid fa-diagram-project"></i> Concept-Based Learning (Erickson & Lanning)</span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                                <div class="accordion-body">
+                                    Rather than discrete rule lists, the curriculum is structured around powerful, transferable concepts (<em>Well-being, Experiences, Identity, Consumption, Sharing the Planet</em>) enabling students to transfer understanding into unfamiliar real-world situations.
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <button class="accordion-header">
+                                    <span><i class="fa-solid fa-newspaper"></i> Critical Media Literacy & Argumentation (Toulmin & Schön)</span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                                <div class="accordion-body">
+                                    Equips learners to evaluate claims, detect cognitive bias (such as the "Highlight Reel Effect"), differentiate fact from opinion, and engage in reflective metacognitive practice.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learner Profile Attributes -->
+                <div class="card mt-4">
+                    <h3><i class="fa-solid fa-user-astronaut"></i> 21st-Century Learner Profile Attributes</h3>
+                    <div class="profile-grid">
+                        <div class="profile-pill"><i class="fa-solid fa-magnifying-glass"></i> Inquirers (Active Knowledge Seekers)</div>
+                        <div class="profile-pill"><i class="fa-solid fa-brain"></i> Critical Thinkers (Evaluating Arguments)</div>
+                        <div class="profile-pill"><i class="fa-solid fa-bullhorn"></i> Effective Communicators (Persuasive Expression)</div>
+                        <div class="profile-pill"><i class="fa-solid fa-shield-heart"></i> Ethical Citizens (Social Responsibility)</div>
+                        <div class="profile-pill"><i class="fa-solid fa-sliders"></i> Responsible Decision-Makers (Principled Choices)</div>
+                        <div class="profile-pill"><i class="fa-solid fa-mirror"></i> Reflective Learners (Metacognitive Awareness)</div>
+                        <div class="profile-pill"><i class="fa-solid fa-people-group"></i> Collaborative Team Members (Group Problem Solving)</div>
+                        <div class="profile-pill"><i class="fa-solid fa-pyramid"></i> Proud Egyptians with Global Perspective</div>
+                    </div>
+                </div>
+
+                <!-- SECTION 2 INSTANT QUIZ (10 MCQs) -->
+                <div class="section-quiz-block" data-quiz-id="quiz_overview"></div>
+            </section>
+
+            <!-- PEDAGOGICAL FOUNDATION: BLOOM'S TAXONOMY & COGNITIVE PROGRESSION -->
+            <section id="blooms-taxonomy-framework" class="content-section">
+                <div class="section-header">
+                    <div class="section-tag"><i class="fa-solid fa-layer-group"></i> Pedagogical Framework</div>
+                    <h2>Bloom's Taxonomy: Cognitive Progression in the Egyptian Baccalaureate</h2>
+                    <p>Grounding secondary English instruction in the 6 cognitive domains—shifting classroom practice from Lower Order Thinking Skills (LOTS: Remembering & Understanding) to Higher Order Thinking Skills (HOTS: Applying, Analyzing, Evaluating & Creating).</p>
+                </div>
+
+                <div class="blooms-card-wrapper">
+                    <!-- Visual Diagram Card (Click to Zoom in Fullscreen Lightbox) -->
+                    <div class="blooms-image-box" onclick="openImageModal('resources/blooms_taxonomy.jpg', 'Bloom\'s Taxonomy: Cognitive Progression Framework in Secondary Education (Vanderbilt University CFT)')" title="Click to View Full-Screen Diagram with Zoom Tools">
+                        <img src="resources/blooms_taxonomy.jpg" alt="Bloom's Taxonomy Pyramid Diagram: Remember, Understand, Apply, Analyze, Evaluate, Create">
+                        <div class="blooms-img-overlay">
+                            <span class="blooms-overlay-btn">
+                                <i class="fa-solid fa-expand"></i> Click to Open Full-Screen Diagram (Zoomable)
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Cognitive Breakdown Grid -->
+                    <div class="blooms-info-content">
+                        <div class="blooms-level-card level-create">
+                            <div class="level-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> CREATE (HOTS)</div>
+                            <h4>Produce new or original work</h4>
+                            <p class="level-verbs">Design, assemble, construct, conjecture, develop, formulate, author, investigate</p>
+                            <div class="curriculum-application"><strong>Baccalaureate Alignment:</strong> Composing JRE analytical paragraphs, authoring creative responses, synthesizing cross-textual arguments.</div>
+                        </div>
+
+                        <div class="blooms-level-card level-evaluate">
+                            <div class="level-badge"><i class="fa-solid fa-gavel"></i> EVALUATE (HOTS)</div>
+                            <h4>Justify a stand or decision</h4>
+                            <p class="level-verbs">Appraise, argue, defend, judge, select, support, value, critique, weigh</p>
+                            <div class="curriculum-application"><strong>Baccalaureate Alignment:</strong> The JRE (Justify – Reason – Evidence) triad, defending claims in pair debates, evaluating media bias.</div>
+                        </div>
+
+                        <div class="blooms-level-card level-analyze">
+                            <div class="level-badge"><i class="fa-solid fa-magnifying-glass-chart"></i> ANALYZE (HOTS)</div>
+                            <h4>Draw connections among ideas</h4>
+                            <p class="level-verbs">Differentiate, organize, relate, compare, contrast, distinguish, examine, experiment, question, test</p>
+                            <div class="curriculum-application"><strong>Baccalaureate Alignment:</strong> Deconstructing the "Highlight Reel Effect", extracting textual evidence, identifying hedged vs. absolute tone.</div>
+                        </div>
+
+                        <div class="blooms-level-card level-apply">
+                            <div class="level-badge"><i class="fa-solid fa-screwdriver-wrench"></i> APPLY</div>
+                            <h4>Use information in new situations</h4>
+                            <p class="level-verbs">Execute, implement, solve, use, demonstrate, interpret, operate, schedule, sketch</p>
+                            <div class="curriculum-application"><strong>Baccalaureate Alignment:</strong> Grammar in communicative context, transferring digital well-being habits to daily life.</div>
+                        </div>
+
+                        <div class="blooms-level-card level-understand">
+                            <div class="level-badge"><i class="fa-solid fa-book-open-reader"></i> UNDERSTAND</div>
+                            <h4>Explain ideas or concepts</h4>
+                            <p class="level-verbs">Classify, describe, discuss, explain, identify, locate, recognize, report, select, translate</p>
+                            <div class="curriculum-application"><strong>Baccalaureate Alignment:</strong> Deducing vocabulary meaning from context (without isolated word-for-word memorization).</div>
+                        </div>
+
+                        <div class="blooms-level-card level-remember">
+                            <div class="level-badge"><i class="fa-solid fa-database"></i> REMEMBER (LOTS)</div>
+                            <h4>Recall facts and basic concepts</h4>
+                            <p class="level-verbs">Define, duplicate, list, memorize, repeat, state</p>
+                            <div class="curriculum-application"><strong>Baccalaureate Alignment:</strong> Foundational retrieval, prerequisite vocabulary recognition before higher-order inquiry.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 1: Direct 74-Slide Interactive Viewer -->
+            <section id="slide-deck-viewer" class="content-section">
+                <div class="section-header">
+                    <div class="section-tag"><i class="fa-solid fa-chalkboard"></i> Slide-By-Slide Presentation Deck</div>
+                    <h2>Complete 74-Slide Interactive Presentation Viewer</h2>
+                    <p>Explore the full verbatim text, pedagogical principles, and visual flow of every single slide from the official training program.</p>
+                </div>
+
+                <div class="slide-viewer-card">
+                    <div class="slide-viewer-header">
+                        <div class="d-flex align-center gap-2">
+                            <span class="slide-counter-badge" id="slide-counter">Slide 1 / 74</span>
+                            <span id="slide-category" class="slide-category-tag"><i class="fa-solid fa-tag"></i> Title & Cover</span>
+                        </div>
+                        <div class="slide-jump-box">
+                            <label for="slide-jump-select" class="text-sm text-muted">Jump to:</label>
+                            <select id="slide-jump-select" class="slide-jump-select" onchange="jumpToSlide(this.value)">
+                                <!-- Populated dynamically via JS -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="slide-viewer-body">
+                        <div class="slide-number-watermark" id="slide-watermark">#1</div>
+                        <div class="slide-content-area">
+                            <h3 class="slide-title" id="slide-title">Egyptian Baccalaureate System</h3>
+                            <p class="text-muted text-sm mb-2" id="slide-subtitle">A New Vision for Secondary Education Development (2026/2027)</p>
+                            <div class="slide-text" id="slide-text">
+                                Official Professional Development Program on the New Secondary Curriculum Philosophy, Pedagogical Framework, and Teaching Methodology.
+                            </div>
+                            <ul class="styled-list" id="slide-bullets">
+                                <li>Ministry of Education & Technical Education</li>
+                                <li>Academic Year 2026 / 2027</li>
+                                <li>National Center for Examinations & Educational Evaluation (NCEEE)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="slide-viewer-footer">
+                        <div class="slide-nav-controls">
+                            <button class="btn-secondary" onclick="prevSlide()"><i class="fa-solid fa-arrow-left"></i> Previous Slide</button>
+                            <button class="btn-primary" onclick="nextSlide()">Next Slide <i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                        <div class="text-sm text-muted">
+                            <kbd>←</kbd> / <kbd>→</kbd> Navigate with keyboard arrow keys
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+
+        <!-- =========================================================================
+             TAB 2: LESSON PLANNING (تخطيط الدروس العامة والوحدات)
+             ========================================================================= -->
+        <div id="master-tab-1" class="master-tab-panel">
+            
+            <!-- SECTION: 5-PERIOD FRAMEWORK -->
+            <section id="five-periods" class="content-section">
+                <div class="section-header">
+                    <div class="section-tag"><i class="fa-solid fa-timeline"></i> Classroom Execution</div>
+                    <h2>The 5-Period Classroom Implementation Framework</h2>
+                    <p>How to execute each sub-unit as an "inquiry-based continuous learning cycle" across the school week.</p>
+                </div>
+
+                <div class="periods-container">
+                    <!-- Period 1 -->
+                    <div class="period-card">
+                        <div class="period-badge">Period 1</div>
+                        <div class="period-icon"><i class="fa-solid fa-comments"></i></div>
+                        <h3>Engagement + Inquiry</h3>
+                        <div class="period-role"><strong>Student Role:</strong> Explore, predict, question</div>
+                        <p class="period-desc">
+                            Activate prior schema via Think-Pair-Share, formulate the Driving Inquiry Question, and conduct initial Bias Discovery on visual triggers.
+                        </p>
+                        <div class="period-meta">
+                            <span><i class="fa-solid fa-toolbox"></i> Strategies: IBL, Think-Pair-Share</span>
+                            <span><i class="fa-solid fa-clock"></i> 45–50 Mins</span>
+                        </div>
+                    </div>
+
+                    <!-- Period 2 -->
+                    <div class="period-card">
+                        <div class="period-badge">Period 2</div>
+                        <div class="period-icon"><i class="fa-solid fa-headphones-simple"></i></div>
+                        <h3>Listening + Evidence</h3>
+                        <div class="period-role"><strong>Student Role:</strong> Listen, identify, extract data</div>
+                        <p class="period-desc">
+                            Progressive 3-pass auditory decoding (Gist ➔ Evidence Extraction ➔ Analysis) and building a collaborative Evidence Board on the whiteboard.
+                        </p>
+                        <div class="period-meta">
+                            <span><i class="fa-solid fa-toolbox"></i> Strategies: Active Listening, Evidence Hunt</span>
+                            <span><i class="fa-solid fa-clock"></i> 45–50 Mins</span>
+                        </div>
+                    </div>
+
+                    <!-- Period 3 -->
+                    <div class="period-card">
+                        <div class="period-badge">Period 3</div>
+                        <div class="period-icon"><i class="fa-solid fa-spell-check"></i></div>
+                        <h3>Language & Media Analysis</h3>
+                        <div class="period-role"><strong>Student Role:</strong> Analyze, transform, notice patterns</div>
+                        <p class="period-desc">
+                            Explore hedging verbs and rhetorical devices without dry grammar lectures; rewrite biased media headlines into objective academic statements.
+                        </p>
+                        <div class="period-meta">
+                            <span><i class="fa-solid fa-toolbox"></i> Strategies: Discovery Learning, Scaffolding</span>
+                            <span><i class="fa-solid fa-clock"></i> 45–50 Mins</span>
+                        </div>
+                    </div>
+
+                    <!-- Period 4 -->
+                    <div class="period-card">
+                        <div class="period-badge">Period 4</div>
+                        <div class="period-icon"><i class="fa-solid fa-users-rays"></i></div>
+                        <h3>JRE + Speaking</h3>
+                        <div class="period-role"><strong>Student Role:</strong> Build, defend, counter-argue</div>
+                        <p class="period-desc">
+                            Deploy JRE orally via the Evidence Card Game, collaborative peer debates (Student A ➔ Student B ➔ Student C), and formal academic linking phrases.
+                        </p>
+                        <div class="period-meta">
+                            <span><i class="fa-solid fa-toolbox"></i> Strategies: JRE Framework, Structured Debate</span>
+                            <span><i class="fa-solid fa-clock"></i> 45–50 Mins</span>
+                        </div>
+                    </div>
+
+                    <!-- Period 5 -->
+                    <div class="period-card">
+                        <div class="period-badge">Period 5</div>
+                        <div class="period-icon"><i class="fa-solid fa-pen-fancy"></i></div>
+                        <h3>Writing + Metacognition</h3>
+                        <div class="period-role"><strong>Student Role:</strong> Synthesize, peer-review, self-reflect</div>
+                        <p class="period-desc">
+                            Synthesize analytical thoughts into a structured JRE paragraph (100–120 words), perform rubric-based peer evaluation, and complete Exit Slips.
+                        </p>
+                        <div class="period-meta">
+                            <span><i class="fa-solid fa-toolbox"></i> Strategies: Process Writing, Rubrics, Metacognition</span>
+                            <span><i class="fa-solid fa-clock"></i> 45–50 Mins</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 5 INSTANT QUIZ (10 MCQs) -->
+                <div class="section-quiz-block" data-quiz-id="quiz_periods"></div>
+            </section>
+
+            <!-- SECTION: UNITS & GRAMMAR ROADMAP -->
+            <section id="skills-roadmap" class="content-section bg-alt">
+                <div class="section-header">
+                    <div class="section-tag"><i class="fa-solid fa-map-location-dot"></i> Scope & Sequence</div>
+                    <h2>Thematic Blueprint & Units 1–5 Overview</h2>
+                    <p>Mapping the 5 core thematic units, target language structures, and authentic inquiry deliverables across Grade 11.</p>
+                </div>
+
+                <div class="units-grid">
+                    <!-- Unit 1 -->
+                    <div class="unit-card">
+                        <div class="unit-header">
+                            <span class="unit-tag">Unit 1</span>
+                            <h3>Living Well (Digital Well-being)</h3>
+                        </div>
+                        <div class="unit-body">
+                            <p><strong>Core Concept:</strong> Identity formation, social comparison theory, and the psychological effects of social media.</p>
+                            <ul class="styled-list mt-2">
+                                <li><strong>Target Vocabulary:</strong> Highlight reel, social comparison, algorithm, validation, biased, distorted.</li>
+                                <li><strong>Grammar in Context:</strong> Present continuous for changing trends; modal verbs of deduction (*must, might, can't*).</li>
+                                <li><strong>Inquiry Product:</strong> Digital Well-being Action Plan & Evidence-based JRE Critique.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Unit 2 -->
+                    <div class="unit-card">
+                        <div class="unit-header">
+                            <span class="unit-tag">Unit 2</span>
+                            <h3>Life Choices (Health & Nudge)</h3>
+                        </div>
+                        <div class="unit-body">
+                            <p><strong>Core Concept:</strong> Personal lifestyle choices, sleep hygiene, and Thaler's Nudge Architecture in public health.</p>
+                            <ul class="styled-list mt-2">
+                                <li><strong>Target Vocabulary:</strong> Choice architecture, cognitive fatigue, circadian rhythm, defaults, intervention.</li>
+                                <li><strong>Grammar in Context:</strong> Conditionals (Zero, First, Second) for hypothetical health outcomes.</li>
+                                <li><strong>Inquiry Product:</strong> School Canteen Choice Architecture Proposal.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Unit 3 -->
+                    <div class="unit-card">
+                        <div class="unit-header">
+                            <span class="unit-tag">Unit 3</span>
+                            <h3>The Power of Technology</h3>
+                        </div>
+                        <div class="unit-body">
+                            <p><strong>Core Concept:</strong> AI ethics, algorithmic governance, automation, and the future of human labor.</p>
+                            <ul class="styled-list mt-2">
+                                <li><strong>Target Vocabulary:</strong> Machine learning, automated bias, accountability, displacement, hallucination.</li>
+                                <li><strong>Grammar in Context:</strong> Passive voice for academic neutrality and process descriptions.</li>
+                                <li><strong>Inquiry Product:</strong> Ethical AI Policy Brief for High Schools.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Unit 4 -->
+                    <div class="unit-card">
+                        <div class="unit-header">
+                            <span class="unit-tag">Unit 4</span>
+                            <h3>Smart Consumption</h3>
+                        </div>
+                        <div class="unit-body">
+                            <p><strong>Core Concept:</strong> Consumer psychology, marketing tricks, scarcity cues, and food waste reduction.</p>
+                            <ul class="styled-list mt-2">
+                                <li><strong>Target Vocabulary:</strong> Loss aversion, scarcity bias, expiration dates, sustainable supply, impulse buying.</li>
+                                <li><strong>Grammar in Context:</strong> Relative clauses (defining and non-defining) for precise technical descriptions.</li>
+                                <li><strong>Inquiry Product:</strong> Household Waste Reduction Audit & JRE Defense.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Unit 5 -->
+                    <div class="unit-card">
+                        <div class="unit-header">
+                            <span class="unit-tag">Unit 5</span>
+                            <h3>Sharing the Planet</h3>
+                        </div>
+                        <div class="unit-body">
+                            <p><strong>Core Concept:</strong> Biodiversity preservation, climate resilience, renewable energy, and ecological stewardship.</p>
+                            <ul class="styled-list mt-2">
+                                <li><strong>Target Vocabulary:</strong> Ecosystem service, carbon footprint, conservation, deforestation, circular economy.</li>
+                                <li><strong>Grammar in Context:</strong> Reported speech and hedging in scientific and diplomatic summaries.</li>
+                                <li><strong>Inquiry Product:</strong> Egyptian Renewable Energy Case Study & Presentation.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 6 INSTANT QUIZ (10 MCQs) -->
+                <div class="section-quiz-block" data-quiz-id="quiz_units"></div>
+            </section>
+
+            <!-- SECTION: INTERACTIVE LESSON PRESENTATION SUITE (UNIT 1.1) -->
+            <section id="lesson-presentation" class="content-section">
+                <div class="section-header">
+                    <div class="section-tag"><i class="fa-solid fa-chalkboard-user"></i> Authentic Classroom Presentation</div>
+                    <h2>Interactive Lesson Presentation: Social Media & Self-Image</h2>
+                    <p>Authentic classroom presentation suite based on Student Book pages 15–20. Includes media player for <code>00.mp3</code>, full script toggle, original textbook clips, and collapsible model answers for all tasks.</p>
+                </div>
+
+                <!-- MEDIA PLAYER TOOL FOR 00.MP3 -->
+                <div class="media-player-card">
+                    <div class="media-player-header">
+                        <div class="media-player-title">
+                            <i class="fa-solid fa-headphones-simple"></i>
+                            <span>Listening Broadcast: <em>The Impossible Standard: How Social Media is Reshaping the Way Teenagers See Themselves</em></span>
+                        </div>
+                        <span class="media-player-badge"><i class="fa-solid fa-file-audio"></i> resources/00.mp3</span>
+                    </div>
+
+                    <!-- Custom Audio Control Toolbar -->
+                    <div class="custom-audio-wrapper">
+                        <!-- Hidden/Linked Audio Media Element with Source Fallbacks -->
+                        <audio id="audio-media-element" preload="auto">
+                            <source src="resources/00.mp3" type="audio/mpeg">
+                            <source src="resources/00.MP3" type="audio/mpeg">
+                        </audio>
+
+                        <div class="audio-controls-row">
+                            <div class="audio-btn-group">
+                                <button class="audio-play-btn" id="audio-play-toggle" onclick="playPauseAudio()" title="Play / Pause Audio">
+                                    <i class="fa-solid fa-play"></i>
+                                </button>
+                                <button class="audio-skip-btn" onclick="skipAudio(-10)" title="Rewind 10 Seconds">
+                                    <i class="fa-solid fa-rotate-left"></i> -10s
+                                </button>
+                                <button class="audio-skip-btn" onclick="skipAudio(10)" title="Forward 10 Seconds">
+                                    <i class="fa-solid fa-rotate-right"></i> +10s
+                                </button>
+                            </div>
+
+                            <div class="audio-progress-container" id="audio-progress-bar-container" title="Click to seek">
+                                <span class="audio-time-stamp" id="audio-current-time">0:00</span>
+                                <div class="audio-progress-bar">
+                                    <div class="audio-progress-fill" id="audio-progress-bar-fill"></div>
+                                </div>
+                                <span class="audio-time-stamp" id="audio-duration-time">--:--</span>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label for="speed-select" style="font-size: 0.8rem; color: #94a3b8; font-weight: 600;">Speed:</label>
+                                <select id="speed-select" class="audio-speed-select" onchange="changeAudioSpeed(this.value)">
+                                    <option value="0.8">0.8x (Scaffolded)</option>
+                                    <option value="1.0" selected>1.0x (Normal)</option>
+                                    <option value="1.2">1.2x (Fluent)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Collapsible Area to Toggle Displaying the Listening Script -->
+                    <div class="collapsible-block mt-3" id="block-listening-script">
+                        <button class="collapsible-trigger" onclick="toggleCollapsible('block-listening-script')">
+                            <span style="color: #0c4a6e; font-weight: 800;"><i class="fa-solid fa-file-lines"></i> Toggle Listening Script</span>
+                            <i class="fa-solid fa-chevron-down chevron-icon"></i>
+                        </button>
+                        <div class="collapsible-content">
+                            <div class="script-text-box">
+                                <p>Over the past decade, social media platforms have transformed from simple communication tools into carefully chosen stages where individuals perform carefully constructed versions of their lives. For teenagers, who are at a particularly sensitive stage of identity formation, this change carries significant psychological results.</p>
+                                <p>Research published by the American Psychological Association in 2023 found that teenagers who spent more than three hours daily on image-based platforms such as Instagram and TikTok were twice as likely to report symptoms of low self-esteem and body dissatisfaction compared to those who used social media for less than one hour per day.</p>
+                                <p>What makes social media especially powerful, and especially dangerous, is the mechanism of social comparison. Unlike traditional media, where the gap between ordinary people and celebrities is obvious, social media has hidden this gap completely. Teenagers are now comparing themselves not only to distant celebrities, but to classmates, acquaintances, and influencers who present their lives as easily perfect.</p>
+                                <p>Psychologists use the term highlight reel effect to describe this phenomenon. What appears online is a selective, filtered, and strategically timed part of reality, yet viewers instinctively treat it as a complete and accurate picture.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="presentation-container">
+                    
+                    <!-- ACTIVITY 1: SECTION A - SOCIAL REFLECTION & INQUIRY (CLIP 1) -->
+                    <div class="activity-presentation-card">
+                        <div class="activity-header">
+                            <div class="activity-title">
+                                <i class="fa-solid fa-comments"></i>
+                                <span>Activity 1: Section A – Social Reflection & Inquiry</span>
+                            </div>
+                            <span class="activity-badge">Student Book Page 15</span>
+                        </div>
+
+                        <div class="activity-body">
+                            <!-- Compact Clip Button -->
+                            <button class="btn-clip-preview" onclick="openImageModal('resources/clip1.png', 'Student Book Page 15: Section A – Social Reflection & Inquiry')">
+                                <i class="fa-solid fa-image"></i> <span>View Original Book Clip (Page 15)</span>
+                            </button>
+
+                            <!-- Interactive Content & Discussion Prompts -->
+                            <div>
+                                <h4 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--primary);">
+                                    1.1 Social Media and Self-Image
+                                </h4>
+                                <p style="font-style: italic; color: var(--text-muted); margin-bottom: 1rem;">
+                                    "In today's fast-changing world, social media plays a major role in shaping how teenagers think, feel, and see themselves. While it can inspire healthy habits and positive change, it can also create unrealistic expectations and pressure."
+                                </p>
+
+                                <div class="alert-box alert-warning mb-3">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                    <div>
+                                        <strong>Definition:</strong> <em>Biased language</em> refers to words that show a strong, unverified opinion and are not fair, objective, or neutral.
+                                    </div>
+                                </div>
+
+                                <div class="card mb-3">
+                                    <h4 style="color: var(--secondary-dark);"><i class="fa-solid fa-question"></i> Driving Inquiry Question:</h4>
+                                    <p style="font-weight: 700; font-size: 1.05rem;">"How does daily screen time on image-based apps directly affect a teenager’s self-esteem?"</p>
+                                </div>
+
+                                <h4 style="font-weight: 800; margin-bottom: 0.5rem;"><i class="fa-solid fa-users"></i> Discussion in Pairs:</h4>
+                                <ul class="styled-list">
+                                    <li><strong>Explain:</strong> What is social media bias?</li>
+                                    <li><strong>Analyze:</strong> How can we identify bias in social media posts?</li>
+                                    <li><strong>Synthesize:</strong> What advice can we give to someone affected by unrealistic expectations?</li>
+                                </ul>
+
+                                <!-- Collapsible Model Answers -->
+                                <div class="collapsible-block mt-3" id="block-ans-act1">
+                                    <button class="collapsible-trigger" onclick="toggleCollapsible('block-ans-act1')">
+                                        <span><i class="fa-solid fa-lightbulb"></i> View Suggested Model Answers (Teacher Guide)</span>
+                                        <i class="fa-solid fa-chevron-down chevron-icon"></i>
+                                    </button>
+                                    <div class="collapsible-content">
+                                        <div class="card bg-alt">
+                                            <p><strong>1. Social Media Bias:</strong> The tendency of online posts to showcase an idealized, selectively filtered version of reality rather than balanced, objective truth.</p>
+                                            <p class="mt-2"><strong>2. Identifying Bias:</strong> Look for loaded emotional language, absolute terms (<em>always, perfect, never</em>), lack of credible evidence, and heavily edited or filtered visual content.</p>
+                                            <p class="mt-2"><strong>3. Pedagogical Advice:</strong> Practice intentional digital boundaries, curate feeds by unfollowing toxic accounts, and remember that posts represent curated "highlight reels," not full lives.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACTIVITY 2: SECTION B - LISTENING & PRE-VIEWING (CLIP 2 & CLIP 3) -->
+                    <div class="activity-presentation-card">
+                        <div class="activity-header">
+                            <div class="activity-title">
+                                <i class="fa-solid fa-headphones"></i>
+                                <span>Activity 2: Section B – Listening Comprehension & Fact Checking</span>
+                            </div>
+                            <span class="activity-badge">Student Book Page 16</span>
+                        </div>
+
+                        <div class="activity-body">
+                            <div class="d-flex gap-2 flex-wrap mb-3">
+                                <button class="btn-clip-preview" onclick="openImageModal('resources/clip2.png', 'Student Book Page 16: Section B - Listening Passage Part 1')">
+                                    <i class="fa-solid fa-image"></i> <span>View Original Book Clip 2 (Page 16 - Top)</span>
+                                </button>
+                                <button class="btn-clip-preview" onclick="openImageModal('resources/clip3.png', 'Student Book Page 16: Section B - Listening Passage Part 2')">
+                                    <i class="fa-solid fa-image"></i> <span>View Original Book Clip 3 (Page 16 - Bottom)</span>
+                                </button>
+                            </div>
+
+                            <h4 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--primary);">
+                                Exercise 1: Listening for Details (Track 00.mp3)
+                            </h4>
+                            <p class="mb-3">Listen to the broadcast and answer the questions based on verified data from the American Psychological Association (APA 2023):</p>
+
+                            <div class="grid-2">
+                                <div class="card">
+                                    <strong>Q1: What is the main idea of the listening text?</strong>
+                                    <p class="text-sm text-muted mt-1">Select the core thesis supported by research evidence.</p>
+                                </div>
+                                <div class="card">
+                                    <strong>Q2: Define the term "Highlight Reel Effect":</strong>
+                                    <p class="text-sm text-muted mt-1">Explain why viewers treat filtered online snippets as accurate reality.</p>
+                                </div>
+                            </div>
+
+                            <!-- Collapsible Model Answers -->
+                            <div class="collapsible-block mt-3" id="block-ans-act2">
+                                <button class="collapsible-trigger" onclick="toggleCollapsible('block-ans-act2')">
+                                    <span><i class="fa-solid fa-lightbulb"></i> View Verified Answers & Explanations</span>
+                                    <i class="fa-solid fa-chevron-down chevron-icon"></i>
+                                </button>
+                                <div class="collapsible-content">
+                                    <div class="card bg-alt">
+                                        <p><strong>Answer 1:</strong> Social media platforms create an "impossible standard" by hiding the gap between reality and perfection, causing increased low self-esteem and body dissatisfaction in teens.</p>
+                                        <p class="mt-2"><strong>Answer 2:</strong> The "highlight reel effect" describes how people publish only their most exciting, flawless, and curated moments, which viewers mistakenly internalize as the norm.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACTIVITY 3: SECTION C - VOCABULARY & COLLOCATIONS (CLIP 4 & CLIP 5) -->
+                    <div class="activity-presentation-card">
+                        <div class="activity-header">
+                            <div class="activity-title">
+                                <i class="fa-solid fa-book-bookmark"></i>
+                                <span>Activity 3: Section C – Vocabulary in Context & Word Families</span>
+                            </div>
+                            <span class="activity-badge">Student Book Page 17</span>
+                        </div>
+
+                        <div class="activity-body">
+                            <div class="d-flex gap-2 flex-wrap mb-3">
+                                <button class="btn-clip-preview" onclick="openImageModal('resources/clip4.png', 'Student Book Page 17: Section C - Vocabulary in Context')">
+                                    <i class="fa-solid fa-image"></i> <span>View Original Book Clip 4 (Page 17 - Top)</span>
+                                </button>
+                                <button class="btn-clip-preview" onclick="openImageModal('resources/clip5.png', 'Student Book Page 17: Section C - Word Families Table')">
+                                    <i class="fa-solid fa-image"></i> <span>View Original Book Clip 5 (Page 17 - Bottom)</span>
+                                </button>
+                            </div>
+
+                            <div class="table-wrapper mb-3">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Verb</th>
+                                            <th>Noun</th>
+                                            <th>Adjective</th>
+                                            <th>Contextual Meaning</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>compare</strong></td>
+                                            <td>comparison</td>
+                                            <td>comparative</td>
+                                            <td>To examine differences and similarities between lives.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>validate</strong></td>
+                                            <td>validation</td>
+                                            <td>valid</td>
+                                            <td>Seeking approval or recognition from social media likes.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>distort</strong></td>
+                                            <td>distortion</td>
+                                            <td>distorted</td>
+                                            <td>To alter or misrepresent reality through selective filtering.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>perceive</strong></td>
+                                            <td>perception</td>
+                                            <td>perceptive</td>
+                                            <td>How an individual interprets and views self-worth.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACTIVITY 4: SECTION D & E - CRITICAL READING & JRE (CLIP 6, 7 & 8) -->
+                    <div class="activity-presentation-card">
+                        <div class="activity-header">
+                            <div class="activity-title">
+                                <i class="fa-solid fa-scale-balanced"></i>
+                                <span>Activity 4: Sections D & E – Critical Reading, Biased Language & JRE Task</span>
+                            </div>
+                            <span class="activity-badge">Student Book Pages 18–19</span>
+                        </div>
+
+                        <div class="activity-body">
+                            <div class="d-flex gap-2 flex-wrap mb-3">
+                                <button class="btn-clip-preview" onclick="openImageModal('resources/clip6.png', 'Student Book Page 18: Section D - Critical Reading Article')">
+                                    <i class="fa-solid fa-image"></i> <span>View Original Book Clip 6 (Page 18 - Top)</span>
+                                </button>
+                                <button class="btn-clip-preview" onclick="openImageModal('resources/clip7.png', 'Student Book Page 18: Section D - Comprehension Questions')">
+                                    <i class="fa-solid fa-image"></i> <span>View Original Book Clip 7 (Page 18 - Bottom)</span>
+                                </button>
+                                <button class="btn-clip-preview" onclick="openImageModal('resources/clip8.png', 'Student Book Page 19: Section E - Biased vs Neutral Task')">
+                                    <i class="fa-solid fa-image"></i> <span>View Original Book Clip 8 (Page 19)</span>
+                                </button>
+                            </div>
+
+                            <div class="alert-box alert-success mb-3">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <div>
+                                    <strong>JRE Performance Task:</strong> "Write a 100-word paragraph justifying your stance: <em>Can social media ever become a completely healthy environment for teenagers?</em> Support with at least two pieces of textual evidence."
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACTIVITY 5: SECTION F - GRAMMAR DISCOVERY & WRITING (CLIP 9, 10 & 11) -->
+                    <div class="activity-presentation-card">
+                        <div class="activity-header">
+                            <div class="activity-title">
+                                <i class="fa-solid fa-pen-nib"></i>
+                                <span>Activity 5: Section F – Grammar in Context & Evaluative Writing</span>
+                            </div>
+                            <span class="activity-badge">Student Book Page 20</span>
+                        </div>
+
+                        <div class="activity-body">
+                            <div class="d-flex gap-2 flex-wrap mb-3">
+                                <button class="btn-clip-preview" onclick="openImageModal('resources/clip9.png', 'Student Book Page 20: Section F - Grammar in Context Part 1')">
+                                    <i class="fa-solid fa-image"></i> <span>View Original Book Clip 9 (Page 20 - Top)</span>
+                                </button>
+                                <button class="btn-clip-preview" onclick="openImageModal('resources/clip10.png', 'Student Book Page 20: Section F - Grammar in Context Part 2')">
+                                    <i class="fa-solid fa-image"></i> <span>View Original Book Clip 10 (Page 20 - Mid)</span>
+                                </button>
+                                <button class="btn-clip-preview" onclick="openImageModal('resources/clip11.png', 'Student Book Page 20: Section F - Writing Task & Evaluation')">
+                                    <i class="fa-solid fa-image"></i> <span>View Original Book Clip 11 (Page 20 - Bottom)</span>
+                                </button>
+                            </div>
+
+                            <h4 style="font-weight: 800; color: var(--primary); margin-bottom: 0.5rem;">
+                                Grammatical Focus: Modals of Deduction (*must, might, can't*) & Present Continuous for Trends
+                            </h4>
+                            <ul class="styled-list">
+                                <li><strong>Certainty (Positive):</strong> <em>"Teenagers who spend 5 hours daily on screens <strong>must be</strong> experiencing digital fatigue."</em></li>
+                                <li><strong>Possibility:</strong> <em>"Algorithms <strong>might be</strong> nudging users toward addictive content."</em></li>
+                                <li><strong>Certainty (Negative):</strong> <em>"A curated 10-second reel <strong>can't be</strong> an accurate reflection of someone's entire life."</em></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SECTION: PRACTICAL LESSON PLAN EXEMPLAR -->
+            <section id="practical-lesson-plan" class="content-section bg-alt">
+                <div class="section-header">
+                    <div class="section-tag"><i class="fa-solid fa-award"></i> Standardized Template</div>
+                    <h2>Practical Lesson Plan Exemplar: Unit 1 (Period 1)</h2>
+                    <p>The complete ministerial lesson plan exemplar for Secondary 2nd Year (Grade 11), detailing teacher instructions, time targets, and JRE scaffolding.</p>
+                </div>
+
+                <div class="lesson-plan-master-card">
+                    <div class="plan-meta-banner">
+                        <div class="plan-meta-left">
+                            <h3><i class="fa-solid fa-chalkboard"></i> Unit 1: Living Well • Period 1 (Engagement & Inquiry)</h3>
+                            <div class="plan-meta-badges">
+                                <span class="plan-meta-badge"><i class="fa-solid fa-clock"></i> Duration: 45–50 Mins</span>
+                                <span class="plan-meta-badge"><i class="fa-solid fa-users"></i> Class: Secondary 2nd Year (Grade 11)</span>
+                                <span class="plan-meta-badge"><i class="fa-solid fa-book"></i> Focus: Social Media & Self-Image</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="driving-question-card">
+                        <h4><i class="fa-solid fa-compass"></i> Overarching Driving Inquiry Question:</h4>
+                        <p>"To what extent are we truly in control of our well-being and self-esteem in an algorithmic, image-based digital world?"</p>
+                    </div>
+
+                    <div class="plan-body-padding">
+                        <div class="timeline-v">
+                            <!-- Stage 1 -->
+                            <div class="t-item">
+                                <div class="t-badge">5–7 Mins</div>
+                                <div class="t-content">
+                                    <strong>Stage 1: Hook & Lead-In (Schema Activation)</strong>
+                                    <p>Teacher displays a side-by-side contrast: a heavily filtered influencer selfie vs. behind-the-scenes reality. Students engage in a 2-minute Think-Pair-Share on what is real vs. constructed.</p>
+                                </div>
+                            </div>
+                            <!-- Stage 2 -->
+                            <div class="t-item">
+                                <div class="t-badge">12–15 Mins</div>
+                                <div class="t-content">
+                                    <strong>Stage 2: Exploration & Contextual Vocabulary (Input)</strong>
+                                    <p>Students explore the listening passage (Track <code>00.mp3</code>) to extract target terms (<em>highlight reel, social comparison, validation</em>) and identify biased language in pairs.</p>
+                                </div>
+                            </div>
+                            <!-- Stage 3 -->
+                            <div class="t-item">
+                                <div class="t-badge">15 Mins</div>
+                                <div class="t-content">
+                                    <strong>Stage 3: Guided JRE Defense & Pair Speaking</strong>
+                                    <p>Students deploy the JRE strategy: Formulate a clear claim, explain the psychological mechanism, and cite APA (2023) research evidence during structured peer debates.</p>
+                                </div>
+                            </div>
+                            <!-- Stage 4 -->
+                            <div class="t-item">
+                                <div class="t-badge">10 Mins</div>
+                                <div class="t-content">
+                                    <strong>Stage 4: Synthesis & Formative Assessment (Exit Ticket)</strong>
+                                    <p>Individual production: Students write a 3-sentence JRE exit ticket evaluating whether social media algorithms intentionally exploit teenage vulnerability.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+
+        <!-- =========================================================================
+             TAB 3: TEACHING THE NOVEL (THE LOST WORLD - CHAPTER 1)
+             ========================================================================= -->
+        <div id="master-tab-2" class="master-tab-panel">
+            
+            <section id="novel-master-portal" class="content-section" style="padding-top: 0;">
+                <div class="novel-master-card">
+                    
+                    <!-- Novel Portal Master Header -->
+                    <div class="novel-master-header">
+                        <div class="novel-header-title-box">
+                            <h2><i class="fa-solid fa-dragon"></i> Novel Literature Portal: <em>The Lost World</em></h2>
+                            <p>Sir Arthur Conan Doyle • Grade 11 Extensive Reading & Reader-Response Inquiry Hub (Chapter 1: A Dream of Adventure)</p>
+                        </div>
+                        <div class="d-flex align-center gap-2 flex-wrap">
+                            <span class="badge-success"><i class="fa-solid fa-book-open"></i> Grade 11 Core Text</span>
+                            <button class="btn btn-neg" onclick="stopNovelSpeech()"><i class="fa-solid fa-stop"></i> Stop Audio</button>
+                        </div>
+                    </div>
+
+                    <!-- NOVEL INFOGRAPHICS QUICK-LAUNCH BAR (TOP IMAGE POP-UPS) -->
+                    <div class="novel-infographics-bar">
+                        <div class="novel-infographics-title">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                            <span>Teaching the Novel Visual Guides & Flowcharts:</span>
+                        </div>
+                        <div class="novel-infographics-buttons">
+                            <!-- Button 1 -->
+                            <button class="novel-infographic-btn" onclick="openImageModal('resources/novel_infographic1.png', 'Teaching the Novel Through Extensive Reading (Core Principles & 3-Stage Class Structure)')" title="Click to View Full-Screen Infographic in Lightbox">
+                                <i class="fa-solid fa-book-open-reader"></i>
+                                <span>1. Core Principles & Stages</span>
+                            </button>
+                            <!-- Button 2 -->
+                            <button class="novel-infographic-btn" onclick="openImageModal('resources/novel_infographic2.png', 'Extensive Reading Approach: Teacher vs Student Roles & 4 Goals')" title="Click to View Full-Screen Infographic in Lightbox">
+                                <i class="fa-solid fa-users-gear"></i>
+                                <span>2. Roles & Goals</span>
+                            </button>
+                            <!-- Button 3 -->
+                            <button class="novel-infographic-btn" onclick="openImageModal('resources/novel_infographic3.png', 'Recommended Novel Lesson Structure (45-50 Min Breakdown)')" title="Click to View Full-Screen Infographic in Lightbox">
+                                <i class="fa-solid fa-clock"></i>
+                                <span>3. 45-50 Min Structure</span>
+                            </button>
+                            <!-- Button 4 -->
+                            <button class="novel-infographic-btn" onclick="openImageModal('resources/novel_infographic4.png', 'Extensive Reading: Key Pedagogical Flowcharts (Vocabulary Steps & Interaction Model)')" title="Click to View Full-Screen Infographic in Lightbox">
+                                <i class="fa-solid fa-diagram-project"></i>
+                                <span>4. Flowcharts & Interaction</span>
+                            </button>
+                            <!-- Button 5 -->
+                            <button class="novel-infographic-btn" onclick="openImageModal('resources/novel_infographic5.png', 'Extensive Reading: Teacher Best Practices & Pitfalls to Avoid')" title="Click to View Full-Screen Infographic in Lightbox">
+                                <i class="fa-solid fa-clipboard-check"></i>
+                                <span>5. Teacher Best Practices</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Novel 7-Subtab Navigation Bar -->
+                    <div class="novel-tab-nav">
+                        <button class="novel-tab-btn active" onclick="switchNovelTab(0)">
+                            <i class="fa-solid fa-chalkboard"></i> 1. Board Organization
+                        </button>
+                        <button class="novel-tab-btn" onclick="switchNovelTab(1)">
+                            <i class="fa-solid fa-book-open-reader"></i> 2. Full Text & TTS
+                        </button>
+                        <button class="novel-tab-btn" onclick="switchNovelTab(2)">
+                            <i class="fa-solid fa-circle-question"></i> 3. Summative Drills (1–7)
+                        </button>
+                        <button class="novel-tab-btn" onclick="switchNovelTab(3)">
+                            <i class="fa-solid fa-scale-balanced"></i> 4. JRE Activities
+                        </button>
+                        <button class="novel-tab-btn" onclick="switchNovelTab(4)">
+                            <i class="fa-solid fa-compass-drafting"></i> 5. Extensive Reading Guide
+                        </button>
+                        <button class="novel-tab-btn" onclick="switchNovelTab(5)">
+                            <i class="fa-solid fa-table-list"></i> 6. Novel Full Summary
+                        </button>
+                        <button class="novel-tab-btn" onclick="switchNovelTab(6)">
+                            <i class="fa-solid fa-clipboard-check"></i> 7. Novel Lesson Plan
+                        </button>
+                    </div>
+
+                    <div class="novel-tab-content-area">
+                        
+                        <!-- NOVEL SUB-TAB 0: BOARD ORGANIZATION -->
+                        <div class="novel-subpanel active" id="novel-subpanel-0">
+                            <div class="novel-whiteboard">
+                                <div class="novel-wb-top">
+                                    <div>
+                                        <strong>Date:</strong> <input type="date" id="novelLessonDate" style="font-size: 0.95rem; padding: 0.3rem 0.65rem; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                                    </div>
+                                    <h3 style="font-size: 1.35rem; text-align: center; flex: 1; margin: 0 1rem; color: var(--primary-dark);">
+                                        Board Organization: Chapter 1 – A Dream of Adventure
+                                    </h3>
+                                    <button class="btn btn-tts" onclick="readNovelBoard()"><i class="fa-solid fa-volume-high"></i> Read Entire Board</button>
+                                </div>
+
+                                <!-- WH Warm-Up -->
+                                <div class="card" style="background: #eff6ff; border-left: 6px solid #0284c7; margin-bottom: 1rem;">
+                                    <h4 style="display: flex; align-items: center; justify-content: space-between; font-weight: 800; color: var(--primary-dark);">
+                                        <span>❓ WH Warm-Up Question</span>
+                                        <button class="speak-btn" onclick="speakText('Why do some people risk everything in pursuit of dangerous adventures?')">🔊 Speak</button>
+                                    </h4>
+                                    <p style="margin-top: 0.4rem; font-weight: 700; font-size: 1.05rem;">"Why do some people risk everything in pursuit of dangerous adventures?"</p>
+                                </div>
+
+                                <div class="novel-wb-grid">
+                                    <!-- Vocabulary Section -->
+                                    <div class="card" style="margin-bottom: 0;">
+                                        <h4 style="font-weight: 800; margin-bottom: 0.75rem; color: var(--text-main);"><i class="fa-solid fa-key"></i> Key Vocabulary (Click to reveal Arabic & hear pronunciation)</h4>
+                                        <div class="novel-vocab-grid">
+                                            <div class="novel-vocab-item" onclick="toggleNovelVocab(this, 'Adventure: مغامرة')">
+                                                <span>1. Adventure <button class="speak-btn" onclick="event.stopPropagation(); speakText('Adventure')">🔊</button></span>
+                                                <span class="novel-ar-trans">مغامرة</span>
+                                            </div>
+                                            <div class="novel-vocab-item" onclick="toggleNovelVocab(this, 'Courage: شجاعة')">
+                                                <span>2. Courage <button class="speak-btn" onclick="event.stopPropagation(); speakText('Courage')">🔊</button></span>
+                                                <span class="novel-ar-trans">شجاعة</span>
+                                            </div>
+                                            <div class="novel-vocab-item" onclick="toggleNovelVocab(this, 'Zoologist: عالم حيوان')">
+                                                <span>3. Zoologist <button class="speak-btn" onclick="event.stopPropagation(); speakText('Zoologist')">🔊</button></span>
+                                                <span class="novel-ar-trans">عالم حيوان</span>
+                                            </div>
+                                            <div class="novel-vocab-item" onclick="toggleNovelVocab(this, 'Assignment: مهمة صحفية')">
+                                                <span>4. Assignment <button class="speak-btn" onclick="event.stopPropagation(); speakText('Assignment')">🔊</button></span>
+                                                <span class="novel-ar-trans">مهمة صحفية</span>
+                                            </div>
+                                            <div class="novel-vocab-item" onclick="toggleNovelVocab(this, 'Deception: خداع أو حيلة')">
+                                                <span>5. Deception <button class="speak-btn" onclick="event.stopPropagation(); speakText('Deception')">🔊</button></span>
+                                                <span class="novel-ar-trans">خداع / حيلة</span>
+                                            </div>
+                                            <div class="novel-vocab-item" onclick="toggleNovelVocab(this, 'Remarkable: مذهل أو غير عادي')">
+                                                <span>6. Remarkable <button class="speak-btn" onclick="event.stopPropagation(); speakText('Remarkable')">🔊</button></span>
+                                                <span class="novel-ar-trans">مذهل / غير عادي</span>
+                                            </div>
+                                            <div class="novel-vocab-item" onclick="toggleNovelVocab(this, 'Evolution: التطور')">
+                                                <span>7. Evolution <button class="speak-btn" onclick="event.stopPropagation(); speakText('Evolution')">🔊</button></span>
+                                                <span class="novel-ar-trans">التطور</span>
+                                            </div>
+                                            <div class="novel-vocab-item" onclick="toggleNovelVocab(this, 'Impulsive: مندفع أو متهور')">
+                                                <span>8. Impulsive <button class="speak-btn" onclick="event.stopPropagation(); speakText('Impulsive')">🔊</button></span>
+                                                <span class="novel-ar-trans">مندفع / متهور</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Grammar & Tasks -->
+                                    <div>
+                                        <div class="card" style="margin-bottom: 1rem;">
+                                            <h4 style="font-weight: 800; color: var(--primary-dark); margin-bottom: 0.5rem;"><i class="fa-solid fa-spell-check"></i> Grammar Focus: Past Simple & Past Perfect</h4>
+                                            <div style="margin-bottom: 0.5rem;">
+                                                <strong>Example 1:</strong> "Two years ago, Challenger <em>traveled</em> through South America."
+                                                <button class="speak-btn" onclick="speakText('Two years ago, Challenger traveled through South America.')">🔊</button>
+                                            </div>
+                                            <div>
+                                                <strong>Example 2:</strong> "Malone <em>had already admired</em> Gladys before he proposed to her."
+                                                <button class="speak-btn" onclick="speakText('Malone had already admired Gladys before he proposed to her.')">🔊</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="card" style="margin-bottom: 0; background: #fefce8; border-color: #fef08a;">
+                                            <h4 style="font-weight: 800; color: #854d0e; margin-bottom: 0.5rem;"><i class="fa-solid fa-bullseye"></i> Evaluation & Assignment</h4>
+                                            <p><strong>Evaluation Item:</strong> State the pretext Malone used in his letter to secure Challenger's appointment.</p>
+                                            <p style="margin-top: 0.5rem;"><strong>Assignment:</strong> Write a 100-word paragraph evaluating Malone's readiness for the South American expedition.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NOVEL SUB-TAB 1: FULL NOVEL TEXT WITH LINE-BY-LINE TTS -->
+                        <div class="novel-subpanel" id="novel-subpanel-1">
+                            <div class="novel-reader-card">
+                                <h3 style="font-weight: 800; color: var(--primary-dark); margin-bottom: 0.75rem;"><i class="fa-solid fa-book-open"></i> Novel Chapter 1: Complete Text with Synchronized TTS Audio</h3>
+                                <div class="novel-reader-controls">
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <button class="btn btn-tts" onclick="playAllNovelStory()"><i class="fa-solid fa-play"></i> Read Entire Chapter From Top</button>
+                                        <button class="btn btn-neg" onclick="stopNovelSpeech()"><i class="fa-solid fa-stop"></i> Stop</button>
+                                        <button class="btn btn-pos" onclick="resumeNovelStory()"><i class="fa-solid fa-pause"></i> Pause / Resume</button>
+                                    </div>
+                                    <div style="font-size: 0.88rem; color: var(--text-muted); font-weight: 700;">
+                                        💡 Tip: Click on any paragraph directly to listen to it!
+                                    </div>
+                                </div>
+
+                                <div class="novel-story-content" id="novelStoryContainer">
+                                    <div class="novel-story-para" id="novel-p1" onclick="readSingleNovelParagraph(1)">
+                                        <strong>[1]</strong> My name is Edward Malone, and at the time this story began I was a young reporter on the Daily Gazette in London. I was twenty-three, full of energy, and certain that a great life was waiting for me. The problem was that I had no idea how to begin it. There was also Gladys Hungerton. I admired her more than anyone I had ever met, and one evening I finally asked her to marry me. She did not laugh at me or become angry. Instead, she looked serious and told me that she valued our friendship but did not love me in the way I hoped.
+                                    </div>
+
+                                    <div class="novel-story-para" id="novel-p2" onclick="readSingleNovelParagraph(2)">
+                                        <strong>[2]</strong> Gladys said "I love a man who has done something brave. Someone who has faced danger, traveled into the unknown, and proved that he can act when it matters." I tried to joke. "So I must discover a new country before you will consider me?" "Not for me," she replied. "If a man is truly brave, he does not act just to impress someone else. He acts because courage is part of his character."
+                                    </div>
+
+                                    <div class="novel-story-para" id="novel-p3" onclick="readSingleNovelParagraph(3)">
+                                        <strong>[3]</strong> Her words stayed with me. I left her house feeling disappointed, but also strangely excited. London suddenly seemed too safe. I wanted a challenge - something that would test me and give my life a clearer purpose. The next evening I went straight to my editor, Mr McArdle. He was an experienced newspaper man who had seen every kind of young reporter. When I asked him to send me on a dangerous assignment, he pushed his glasses up and stared at me. "You want danger?" he said. "Most sensible people want to avoid it." "I want a real story, sir. Something difficult."
+                                    </div>
+
+                                    <div class="novel-story-para" id="novel-p4" onclick="readSingleNovelParagraph(4)">
+                                        <strong>[4]</strong> He studied me for a moment, then smiled. "Perhaps I do have a job for you. Have you heard of Professor George Edward Challenger?" Of course I had. Almost everyone in the newspaper world knew his name. Challenger was a famous zoologist, brilliant but extremely difficult. He had recently returned from South America with an extraordinary story about unknown animals. When scientists questioned him, he refused to give clear details. When reporters tried to interview him, he often threw them out of his house - sometimes literally.
+                                    </div>
+
+                                    <div class="novel-story-para" id="novel-p5" onclick="readSingleNovelParagraph(5)">
+                                        <strong>[5]</strong> "Do you want me to interview him?" I asked. "If you can get through the front door," McArdle replied. "Two years ago Challenger traveled alone through a little-known part of South America. He came back claiming that something remarkable had happened. He had damaged photographs, strange sketches, and a few pieces of evidence, but he would not reveal the exact place. Most people think he is either mistaken or lying. Find out which."
+                                    </div>
+
+                                    <div class="novel-story-para" id="novel-p6" onclick="readSingleNovelParagraph(6)">
+                                        <strong>[6]</strong> This was exactly the kind of chance I had been looking for. Yet there was one problem: Challenger hated journalists. If I arrived honestly and said I worked for the Gazette, the interview would probably end before it began. That night I went to the Savage Club, where many writers and scientists met. I found my friend Tarp Henry, who worked for a scientific journal, and asked what he knew about Challenger.
+                                    </div>
+
+                                    <div class="novel-story-para" id="novel-p7" onclick="readSingleNovelParagraph(7)">
+                                        <strong>[7]</strong> "He is clever," Henry said, "but impossible. He argues with everyone. At a scientific meeting in Vienna he almost started a battle over a theory of evolution. If you want to speak to him, do not mention newspapers." That gave me an idea. I asked Henry to find Challenger's latest scientific paper. It was full of technical language I barely understood, but I copied one complicated sentence and used it in a letter. I pretended to be a young student who admired Challenger's work but had a question about one of his arguments.
+                                    </div>
+
+                                    <div class="novel-story-para" id="novel-p8" onclick="readSingleNovelParagraph(8)">
+                                        <strong>[8]</strong> Henry read the letter and laughed. "You are taking a risk, Malone. He may realize at once that you know nothing about the subject." "I only need to get inside his study," I said. "After that, I will take my chance." Two days later a reply arrived. The handwriting looked as aggressive as the man himself. Challenger wrote that my question showed poor understanding, but he was willing to explain the matter in person. He gave me an appointment for eleven o'clock on Wednesday morning.
+                                    </div>
+
+                                    <div class="novel-story-para" id="novel-p9" onclick="readSingleNovelParagraph(9)">
+                                        <strong>[9]</strong> I should have been nervous. Instead, I felt as if my real life had finally begun. On Wednesday I traveled to Professor Challenger's large house in Kensington. A quiet servant named Austin opened the door. Before he could take me to the study, a small, lively woman stopped me in the hall. "You have come to see my husband?" she asked. "Yes, Mrs Challenger." She lowered her voice. "Then I should warn you. George is a perfectly impossible person. If he becomes angry, do not argue too long."
+                                    </div>
+
+                                    <div class="novel-story-para" id="novel-p10" onclick="readSingleNovelParagraph(10)">
+                                        <strong>[10]</strong> A deep voice suddenly roared from behind a closed door. Austin opened it, and I entered. Professor Challenger sat behind a wide desk covered with books, maps, fossils, and papers. He was shorter than I expected, but enormously broad. His black beard spread across his chest, and his sharp grey-blue eyes seemed to measure every weakness in me. "Well?" he demanded. "You are the young man who has difficulty understanding plain science?" I had entered looking for adventure. I had found it sooner than I expected.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NOVEL SUB-TAB 2: CHAPTER SUMMATIVE DRILLS (QUESTIONS 1–7) -->
+                        <div class="novel-subpanel" id="novel-subpanel-2">
+                            <div class="card">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+                                    <h3 style="font-weight: 800; color: var(--primary-dark);"><i class="fa-solid fa-circle-question"></i> Chapter 1 Summative Questions (1–7)</h3>
+                                    <button class="btn btn-tts" onclick="readAllNovelSummative()"><i class="fa-solid fa-volume-high"></i> Read All Summative Questions</button>
+                                </div>
+
+                                <!-- Q1 -->
+                                <div class="novel-q-card">
+                                    <div class="novel-q-header">
+                                        <div class="novel-q-title"><strong>1.</strong> Explain how Gladys's idea of courage changes Malone's plans for his future.</div>
+                                        <button class="speak-btn" onclick="speakText('1. Explain how Gladys's idea of courage changes Malone's plans for his future.')">🔊</button>
+                                    </div>
+                                    <div class="novel-choices-grid">
+                                        <button class="novel-choice-btn" onclick="checkNovelInteractive(this, false)">A) She convinced him to quit journalism and live a peaceful life.</button>
+                                        <button class="novel-choice-btn" onclick="checkNovelInteractive(this, true)">B) She inspired him to seek a dangerous challenge to develop and prove true character.</button>
+                                        <button class="novel-choice-btn" onclick="checkNovelInteractive(this, false)">C) She demanded that he discover South America immediately to marry her.</button>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-pos" onclick="toggleNovelAnswer('novelAns1')">👁 Show Model Answer</button>
+                                    </div>
+                                    <div id="novelAns1" class="novel-model-ans">
+                                        <span class="badge-success">Model Answer</span><br>
+                                        Gladys believes true courage is an intrinsic character trait forged by facing danger. This makes Malone feel London is too mundane and motivates him to ask his editor for a perilous assignment.
+                                    </div>
+                                </div>
+
+                                <!-- Q2 -->
+                                <div class="novel-q-card">
+                                    <div class="novel-q-header">
+                                        <div class="novel-q-title"><strong>2.</strong> Why does Malone ask Mr McArdle to give him a dangerous assignment?</div>
+                                        <button class="speak-btn" onclick="speakText('2. Why does Malone ask Mr McArdle to give him a dangerous assignment?')">🔊</button>
+                                    </div>
+                                    <div class="novel-choices-grid">
+                                        <button class="novel-choice-btn" onclick="checkNovelInteractive(this, true)">A) To test his limits, gain clear purpose, and prove his inner bravery.</button>
+                                        <button class="novel-choice-btn" onclick="checkNovelInteractive(this, false)">B) To get a salary raise from the Daily Gazette.</button>
+                                        <button class="novel-choice-btn" onclick="checkNovelInteractive(this, false)">C) Because he was ordered by Professor Challenger.</button>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-pos" onclick="toggleNovelAnswer('novelAns2')">👁 Show Model Answer</button>
+                                    </div>
+                                    <div id="novelAns2" class="novel-model-ans">
+                                        <span class="badge-success">Model Answer</span><br>
+                                        Malone wants a challenge that tests him and gives his life a clearer purpose rather than remaining in the safe, comfortable routine of London reporting.
+                                    </div>
+                                </div>
+
+                                <!-- Q3 -->
+                                <div class="novel-q-card">
+                                    <div class="novel-q-header">
+                                        <div class="novel-q-title"><strong>3.</strong> Explain why Malone writes to Professor Challenger as if he understands Challenger's scientific work.</div>
+                                        <button class="speak-btn" onclick="speakText('3. Explain why Malone writes to Professor Challenger as if he understands Challenger's scientific work.')">🔊</button>
+                                    </div>
+                                    <div class="novel-choices-grid">
+                                        <button class="novel-choice-btn" onclick="checkNovelInteractive(this, false)">A) Because Malone had a university degree in zoology.</button>
+                                        <button class="novel-choice-btn" onclick="checkNovelInteractive(this, true)">B) Challenger hated journalists; posing as an admiring student was Malone's only way in.</button>
+                                        <button class="novel-choice-btn" onclick="checkNovelInteractive(this, false)">C) To openly mock Challenger's theory of evolution.</button>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-pos" onclick="toggleNovelAnswer('novelAns3')">👁 Show Model Answer</button>
+                                    </div>
+                                    <div id="novelAns3" class="novel-model-ans">
+                                        <span class="badge-success">Model Answer</span><br>
+                                        Challenger despised reporters and threw them out of his home. Disguising his identity as an earnest science student was the only clever way to secure an in-person meeting.
+                                    </div>
+                                </div>
+
+                                <!-- Q4 -->
+                                <div class="novel-q-card">
+                                    <div class="novel-q-header">
+                                        <div class="novel-q-title"><strong>4.</strong> Analyze what Mr McArdle's reaction to Malone's request reveals about Malone's attitude to danger.</div>
+                                        <button class="speak-btn" onclick="speakText('4. Analyze what Mr McArdle's reaction to Malone's request reveals about Malone's attitude to danger.')">🔊</button>
+                                    </div>
+                                    <div class="novel-choices-grid">
+                                        <button class="novel-choice-btn" onclick="checkNovelInteractive(this, true)">A) It shows Malone is youthful, daring, and idealistic compared to sensible people.</button>
+                                        <button class="novel-choice-btn" onclick="checkNovelInteractive(this, false)">B) It shows Malone is extremely experienced in wilderness survival.</button>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-pos" onclick="toggleNovelAnswer('novelAns4')">👁 Show Model Answer</button>
+                                    </div>
+                                    <div id="novelAns4" class="novel-model-ans">
+                                        <span class="badge-success">Model Answer</span><br>
+                                        McArdle notes that "most sensible people want to avoid danger," highlighting that Malone is impulsive, adventurous, and willing to take high risks for personal fulfillment.
+                                    </div>
+                                </div>
+
+                                <!-- Q5 -->
+                                <div class="novel-q-card">
+                                    <div class="novel-q-header">
+                                        <div class="novel-q-title"><strong>5.</strong> How do Mrs Challenger's warning and Challenger's first appearance build suspense at the end of the chapter?</div>
+                                        <button class="speak-btn" onclick="speakText('5. How do Mrs Challenger's warning and Challenger's first appearance build suspense at the end of the chapter?')">🔊</button>
+                                    </div>
+                                    <div class="novel-choices-grid">
+                                        <button class="novel-choice-btn" onclick="checkNovelInteractive(this, true)">A) Her warning about his impossible temper and his imposing roar amplify fear of exposure.</button>
+                                        <button class="novel-choice-btn" onclick="checkNovelInteractive(this, false)">B) They calm Malone down and show the professor is harmless.</button>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-pos" onclick="toggleNovelAnswer('novelAns5')">👁 Show Model Answer</button>
+                                    </div>
+                                    <div id="novelAns5" class="novel-model-ans">
+                                        <span class="badge-success">Model Answer</span><br>
+                                        Mrs. Challenger warns that her husband is "perfectly impossible," and Challenger's broad build, roaring voice, and piercing stare create intense tension over whether Malone's fraud will be discovered.
+                                    </div>
+                                </div>
+
+                                <!-- Q6 -->
+                                <div class="novel-q-card">
+                                    <div class="novel-q-header">
+                                        <div class="novel-q-title"><strong>6.</strong> Evaluate Malone's decision to use deception in order to get an interview with Challenger. Was his method acceptable? Give reasons.</div>
+                                        <button class="speak-btn" onclick="speakText('6. Evaluate Malone's decision to use deception in order to get an interview with Challenger. Was his method acceptable?')">🔊</button>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-pos" onclick="toggleNovelAnswer('novelAns6')">👁 Show Evaluation / Model Answer</button>
+                                    </div>
+                                    <div id="novelAns6" class="novel-model-ans">
+                                        <span class="badge-success">Evaluation & Rationale</span><br>
+                                        <strong>Ethical Angle:</strong> Deception violates pure journalistic ethics and misrepresents intent.<br>
+                                        <strong>Pragmatic Angle:</strong> Given Challenger's violent hostility toward the press, undercover tactics were the sole practical method to investigate a story of monumental public importance.
+                                    </div>
+                                </div>
+
+                                <!-- Q7 -->
+                                <div class="novel-q-card">
+                                    <div class="novel-q-header">
+                                        <div class="novel-q-title"><strong>7.</strong> Evaluate Malone's desire for adventure at this stage. Does it show maturity, impulsiveness, or both? Explain.</div>
+                                        <button class="speak-btn" onclick="speakText('7. Evaluate Malone's desire for adventure at this stage. Does it show maturity, impulsiveness, or both?')">🔊</button>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-pos" onclick="toggleNovelAnswer('novelAns7')">👁 Show Evaluation / Model Answer</button>
+                                    </div>
+                                    <div id="novelAns7" class="novel-model-ans">
+                                        <span class="badge-success">Evaluation & Rationale</span><br>
+                                        It exhibits <strong>both</strong>:
+                                        <ul style="margin-left: 1.25rem; margin-top: 0.35rem;">
+                                            <li><strong>Impulsiveness:</strong> Triggered rapidly by romantic rejection and an eagerness to impress a woman.</li>
+                                            <li><strong>Maturity:</strong> A conscious yearning to test his character, conquer personal complacency, and establish a meaningful professional career.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NOVEL SUB-TAB 3: JRE INTERACTIVE ACTIVITIES -->
+                        <div class="novel-subpanel" id="novel-subpanel-3">
+                            <div class="card">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+                                    <h3 style="font-weight: 800; color: var(--primary-dark);"><i class="fa-solid fa-scale-balanced"></i> JRE (Justify, Reasoning & Evidence) Interactive Activities</h3>
+                                    <button class="btn btn-tts" onclick="readAllNovelJRE()"><i class="fa-solid fa-volume-high"></i> Read All JRE Activities</button>
+                                </div>
+
+                                <!-- JRE Drill 1 -->
+                                <div class="novel-q-card">
+                                    <div class="novel-q-header">
+                                        <div class="novel-q-title">
+                                            <strong>JRE Activity 1:</strong> Is Gladys a positive influence on Malone at the beginning of the story?
+                                        </div>
+                                        <button class="speak-btn" onclick="speakText('JRE Activity 1: Is Gladys a positive influence on Malone at the beginning of the story?')">🔊</button>
+                                    </div>
+
+                                    <div class="novel-jre-box">
+                                        <div class="novel-jre-step">
+                                            <strong>Step 1: Justify (Your Judgment):</strong>
+                                            <div class="novel-choices-grid mt-2">
+                                                <button class="novel-choice-btn" onclick="checkNovelInteractive(this, true)">Yes, she serves as a positive catalyst for his growth.</button>
+                                                <button class="novel-choice-btn" onclick="checkNovelInteractive(this, false)">No, she is entirely destructive and rude to him.</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="novel-jre-step">
+                                            <strong>Step 2: Reasoning (Why?):</strong>
+                                            <p style="margin-top: 0.35rem; color: var(--text-main);">Her rejection pushes Malone out of his comfortable, uninspired life and forces him to discover genuine purpose and courage.</p>
+                                        </div>
+
+                                        <div class="novel-jre-step">
+                                            <strong>Step 3: Textual Evidence (Quotes & Facts):</strong>
+                                            <ul style="margin-left: 1.25rem; color: var(--text-main);">
+                                                <li><em>Quote:</em> "He acts because courage is part of his character."</li>
+                                                <li><em>Action:</em> Malone reflects that London seemed "too safe" and immediately requests a dangerous assignment.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-top: 0.75rem;" class="d-flex gap-2 flex-wrap">
+                                        <button class="btn btn-pos" onclick="toggleNovelAnswer('novelJreModel1')">👁 Show Full JRE Scaffold</button>
+                                        <button class="speak-btn" onclick="speakText('Justify: Yes. Reasoning: She forces him out of complacency. Evidence: She says courage is part of character, making him seek adventure.')">🔊 Speak JRE</button>
+                                    </div>
+
+                                    <div id="novelJreModel1" class="novel-model-ans">
+                                        <span class="badge-success">JRE Full Synthesis Model</span><br>
+                                        <strong>Justify:</strong> Gladys acts as a positive influence on Malone.<br>
+                                        <strong>Reasoning:</strong> By refusing to accept a passive suitor, she articulates a higher ideal of manhood and courage, transforming Malone's unfocused ambition into active bravery.<br>
+                                        <strong>Evidence:</strong> Her assertion that true bravery is an intrinsic virtue leaves Malone feeling "strangely excited", driving him straight to Mr. McArdle for a real testing challenge.
+                                    </div>
+                                </div>
+
+                                <!-- JRE Drill 2 -->
+                                <div class="novel-q-card">
+                                    <div class="novel-q-header">
+                                        <div class="novel-q-title">
+                                            <strong>JRE Activity 2:</strong> Is Malone truly ready for the kind of adventure he is seeking by the end of this chapter?
+                                        </div>
+                                        <button class="speak-btn" onclick="speakText('JRE Activity 2: Is Malone truly ready for the kind of adventure he is seeking by the end of this chapter?')">🔊</button>
+                                    </div>
+
+                                    <div class="novel-jre-box">
+                                        <div class="novel-jre-step">
+                                            <strong>Step 1: Justify (Your Judgment):</strong>
+                                            <div class="novel-choices-grid mt-2">
+                                                <button class="novel-choice-btn" onclick="checkNovelInteractive(this, false)">Yes, he is fully prepared and knowledgeable.</button>
+                                                <button class="novel-choice-btn" onclick="checkNovelInteractive(this, true)">No, he is mentally and scientifically unprepared.</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="novel-jre-step">
+                                            <strong>Step 2: Reasoning (Why?):</strong>
+                                            <p style="margin-top: 0.35rem; color: var(--text-main);">Malone relies on improvisation and bluffing rather than real expertise or survival preparation to confront a dangerous scientist.</p>
+                                        </div>
+
+                                        <div class="novel-jre-step">
+                                            <strong>Step 3: Textual Evidence (Quotes & Facts):</strong>
+                                            <ul style="margin-left: 1.25rem; color: var(--text-main);">
+                                                <li><em>With Tarp Henry:</em> Malone admits copying a sentence he "barely understood" from a paper.</li>
+                                                <li><em>With Challenger:</em> Challenger noted Malone's letter showed "poor understanding," and Malone is immediately intimidated upon entering.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-top: 0.75rem;" class="d-flex gap-2 flex-wrap">
+                                        <button class="btn btn-pos" onclick="toggleNovelAnswer('novelJreModel2')">👁 Show Full JRE Scaffold</button>
+                                        <button class="speak-btn" onclick="speakText('Justify: No. Reasoning: Malone relies on bluffing without real knowledge. Evidence: He copied a sentence he did not understand, which Challenger immediately detected.')">🔊 Speak JRE</button>
+                                    </div>
+
+                                    <div id="novelJreModel2" class="novel-model-ans">
+                                        <span class="badge-success">JRE Full Synthesis Model</span><br>
+                                        <strong>Justify:</strong> Malone is not truly ready for the gravity of the adventure he seeks.<br>
+                                        <strong>Reasoning:</strong> His preparation consists entirely of superficial bluffs and youthful enthusiasm, underestimating both the physical and intellectual challenges ahead.<br>
+                                        <strong>Evidence:</strong> Tarp Henry warns him that he will be exposed, Challenger identifies his "poor understanding" in writing, and Mrs. Challenger warns him of dangerous violence before he even steps inside.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NOVEL SUB-TAB 4: EXTENSIVE READING IMPLEMENTATION GUIDE -->
+                        <div class="novel-subpanel" id="novel-subpanel-4">
+                            <div class="card">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+                                    <h3 style="font-weight: 800; color: var(--primary-dark);"><i class="fa-solid fa-compass-drafting"></i> Extensive Reading Implementation Framework (45-50 Min Lesson)</h3>
+                                    <button class="btn btn-tts" onclick="readNovelExtensiveGuide()"><i class="fa-solid fa-volume-high"></i> Read Extensive Framework</button>
+                                </div>
+
+                                <div style="background: var(--primary-light); padding: 0.85rem 1.15rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; border-left: 5px solid var(--primary);">
+                                    <strong>Core Principle:</strong> Reading for Pleasure at Home • Thinking for Meaning • Maximizing Student Talking Time (STT) • Teacher Facilitates without Translating Word-for-Word.
+                                </div>
+
+                                <table class="novel-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 20%;">Lesson Stage & Timing</th>
+                                            <th style="width: 22%;">Pedagogical Step & Objective</th>
+                                            <th style="width: 25%;">Teacher's Role & Best Practices</th>
+                                            <th style="width: 33%;">Practical Application to Chapter 1</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Stage 1: Reviewing & Recall</strong><br>(10 Mins)</td>
+                                            <td><strong>Recall Previous & Retrieval Questions:</strong><br>Activate memory, use one-minute retell, and elicit key concepts.</td>
+                                            <td><strong>Facilitator / Questioner:</strong><br>Ask short focused questions. Avoid over-explaining or dominating conversation.</td>
+                                            <td>Students perform a 1-minute pair retell using 3 keywords: <em>Proposal</em>, <em>Courage</em>, and <em>Daily Gazette</em>. Prompt: "Why did Gladys reject Edward?"</td>
+                                        </tr>
+                                        <tr>
+                                            <td rowspan="3"><strong>Stage 2: Viewing & Discussion</strong><br>(25–30 Mins)</td>
+                                            <td><strong>Comprehension & Event Discussion:</strong><br>Sequencing, character motives, and quote analysis.</td>
+                                            <td><strong>Guide / Moderator:</strong><br>Maximize Student Talking Time (STT). Manage group interactions and debates.</td>
+                                            <td>Small groups analyze McArdle's reaction to Malone's request for danger. Debate whether McArdle was testing Malone's grit or mocking him.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Contextual Vocabulary Development:</strong><br>4-Step Method:<br>1. Identify → 2. Infer → 3. Discuss → 4. Verify.</td>
+                                            <td><strong>Detective Coach:</strong><br>Do not translate word-for-word. Guide students to deduce meaning from surrounding sentences.</td>
+                                            <td>Students locate words like <em>Zoologist</em> and <em>Evolution</em>. Infer meanings from Challenger's fight in Vienna and his fossils before checking definitions.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Character Hot-Seating & JRE:</strong><br>Voice analysis, justification, and reasoning with direct quotes.</td>
+                                            <td><strong>Inquiry Instigator:</strong><br>Always ask "Why do you think so?" and demand textual evidence for every claim.</td>
+                                            <td>One student sits in the Hot Seat as Edward Malone. Classmates interrogate his motives for sending a deceitful letter to Professor Challenger.</td>
+                                        </tr>
+                                        <tr>
+                                            <td rowspan="2"><strong>Stage 3: Application & Pre-Viewing</strong><br>(10 Mins)</td>
+                                            <td><strong>Written Consolidation:</strong><br>Synthesize understanding via short written tasks.</td>
+                                            <td><strong>Learning Supporter:</strong><br>Provide targeted scaffolding for students writing summaries and evaluations.</td>
+                                            <td>Students write a 3-sentence evaluation on whether Malone's deceptive trick was acceptable given Challenger's hostility toward the press.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Pre-Viewing & Prediction:</strong><br>Introduce key settings and build cliffhangers for the next chapter.</td>
+                                            <td><strong>Scaffolder:</strong><br>Spark curiosity and maintain reading for pleasure at home.</td>
+                                            <td>The teacher highlights Challenger's roaring voice at the door. Students predict what will happen the exact moment Malone steps into his study.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.25rem;">
+                                    <div style="background: #fee2e2; border: 1.5px solid #f87171; border-radius: var(--radius-md); padding: 1rem;">
+                                        <strong style="color: #b91c1c;">🚫 What Teachers Must AVOID:</strong>
+                                        <ul style="margin-left: 1.25rem; font-size: 0.9rem; margin-top: 0.4rem; color: #991b1b;">
+                                            <li>Translating the novel word-for-word in class.</li>
+                                            <li>Dominating discussions (High TTT / Low STT).</li>
+                                            <li>Over-explaining and lecturing at length.</li>
+                                            <li>Giving away vocabulary meanings immediately.</li>
+                                        </ul>
+                                    </div>
+                                    <div style="background: #dcfce7; border: 1.5px solid #4ade80; border-radius: var(--radius-md); padding: 1rem;">
+                                        <strong style="color: #15803d;">✅ What Teachers Must MAINTAIN:</strong>
+                                        <ul style="margin-left: 1.25rem; font-size: 0.9rem; margin-top: 0.4rem; color: #166534;">
+                                            <li>Maximize Student Talking Time (STT ≥ 70%).</li>
+                                            <li>Encourage guessing meaning from context clues.</li>
+                                            <li>Demand justification ("Why do you think so?").</li>
+                                            <li>Promote prediction and reading for pleasure at home.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NOVEL SUB-TAB 5: NOVEL FULL SUMMARY -->
+                        <div class="novel-subpanel" id="novel-subpanel-5">
+                            <div class="card">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+                                    <h3 style="font-weight: 800; color: var(--primary-dark);"><i class="fa-solid fa-table-list"></i> The Lost World: Complete Novel Comprehensive Summary</h3>
+                                    <button class="btn btn-tts" onclick="readNovelSummaryText()"><i class="fa-solid fa-volume-high"></i> Read Novel Summary</button>
+                                </div>
+
+                                <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 0.85rem;">
+                                    A chronological overview of Sir Arthur Conan Doyle's <em>The Lost World</em>, mapping the full plot from the initial London proposal to the final Amazon expedition and aftermath:
+                                </p>
+
+                                <table class="novel-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 18%;">Novel Arc / Stages</th>
+                                            <th style="width: 25%;">Key Events & Plot Progression</th>
+                                            <th style="width: 25%;">Central Characters Involved</th>
+                                            <th style="width: 32%;">Thematic & Literary Significance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>1. The Catalyst & Quest Initiation</strong><br>(Chapters 1–3)</td>
+                                            <td>Edward Malone is rejected by Gladys Hungerton, who demands an adventurous, heroic husband. Seeking a dangerous story, Malone accepts an assignment to interview the volatile Professor Challenger. Posing as a science student, Malone gains entry, survives a physical fight, and earns Challenger's trust.</td>
+                                            <td>Edward Malone, Gladys Hungerton, Mr. McArdle, Tarp Henry, Mrs. Challenger, Professor George Challenger.</td>
+                                            <td>Establishes the themes of youthful ambition, romantic delusion, journalistic ethics, and the clash between scientific truth and institutional skepticism.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>2. The Challenge & Expedition Formation</strong><br>(Chapters 4–6)</td>
+                                            <td>Challenger reveals Maple White's sketch of a living Stegosaurus on a South American plateau. At the Zoological Society, an uproar erupts. A committee is formed to verify his claims, consisting of skeptic Professor Summerlee, adventurer Lord John Roxton, and Malone. Challenger joins them in Brazil.</td>
+                                            <td>Professor Challenger, Professor Summerlee, Lord John Roxton, Malone.</td>
+                                            <td>Scientific rivalry and exploration. Contrasts Summerlee's rigid skepticism with Challenger's eccentric certainty and Roxton's pragmatic wilderness mastery.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>3. Journey into the Unknown</strong><br>(Chapters 7–9)</td>
+                                            <td>The expedition travels up the Amazon by boat and canoe. Guided by native Indians, they reach the towering red cliffs of the volcanic plateau. They fell a tall tree across a deep chasm to reach the plateau, but their treacherous guide Gomez destroys the tree bridge, trapping them in the prehistoric world.</td>
+                                            <td>The Four Explorers, Gomez, Manuel, Zamba.</td>
+                                            <td>The classic "Point of No Return" in adventure literature. Human vulnerability in isolated ancient ecosystems cut off from modern civilization.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>4. Encounters & Survival in the Lost World</strong><br>(Chapters 10–13)</td>
+                                            <td>The explorers establish Fort Challenger. They encounter iguanodons, are attacked by vicious pterodactyls, and witness carnivorous dinosaurs. Malone explores alone at night and discovers Lake Gladys. A brutal war breaks out with the Ape-Men (anthropoids), who capture the professors.</td>
+                                            <td>The Explorers, Ape-Men (King of the Anthropoids), Indigenous Human Tribe (Accala Indians).</td>
+                                            <td>Evolutionary conflict, primal terror, and the boundary between humankind and beasts. Malone's naming of Lake Gladys highlights his lingering romantic obsession.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>5. Alliance, Victory & Escape</strong><br>(Chapters 14–15)</td>
+                                            <td>Roxton and Malone rescue the captured professors using firearms. They ally with the indigenous Accala human tribe to defeat the ape-men, securing peace on the plateau. A grateful native boy shows them a secret tunnel through the caves, enabling their safe escape back to civilization.</td>
+                                            <td>The Explorers, Native Indian Chief and Boy.</td>
+                                            <td>The power of modern human ingenuity and firepower against primitive savagery, followed by the moral dilemma of indigenous tribes wanting to keep them trapped.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>6. London Triumphs & Ironic Conclusion</strong><br>(Chapter 16)</td>
+                                            <td>At Queen's Hall in London, the skeptics denounce the report until Challenger releases a live, screeching baby pterodactyl, creating mass hysteria and undeniable proof. Malone rushes to Gladys, only to discover she married a dull clerk named William Potts. Roxton reveals rough diamonds from the plateau, and Malone vows to return to the Lost World.</td>
+                                            <td>Challenger, Summerlee, Roxton, Malone, Gladys, William Potts.</td>
+                                            <td>Dramatic irony and subversion of the conventional romantic quest. Malone realizes true character is built for oneself, not for the fickle approval of others.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- NOVEL SUB-TAB 6: NOVEL LITERATURE LESSON PLAN -->
+                        <div class="novel-subpanel" id="novel-subpanel-6">
+                            <div class="card">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+                                    <h3 style="font-weight: 800; color: var(--primary-dark);"><i class="fa-solid fa-clipboard-check"></i> NOVEL LITERATURE LESSON PLAN: Reader-Response & Inquiry-Based Framework</h3>
+                                    <button class="btn btn-tts" onclick="readNovelLessonPlanText()"><i class="fa-solid fa-volume-high"></i> Read Full Lesson Plan</button>
+                                </div>
+
+                                <!-- Template Meta Header Grid -->
+                                <div class="template-header-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; background: var(--primary-light); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+                                    <div><strong>Teacher Name:</strong> Dr. Mazen Badawy</div>
+                                    <div><strong>Date / Class:</strong> Secondary Advanced ELL (Grade 11)</div>
+                                    <div><strong>Novel Title:</strong> The Lost World (Sir Arthur Conan Doyle)</div>
+                                    <div><strong>Chapter(s):</strong> Chapter 1: A Dream of Adventure</div>
+                                    <div style="grid-column: span 2;"><strong>Main Theme:</strong> Courage vs. Recklessness, Ambition, and the Search for Purpose</div>
+                                </div>
+
+                                <!-- 1. HOOK & THEMATIC CONNECTION -->
+                                <div class="novel-lp-card">
+                                    <div class="novel-lp-title">
+                                        <span>1. HOOK & THEMATIC CONNECTION</span>
+                                        <span class="badge-success">Target Time: 5 Mins</span>
+                                    </div>
+                                    <div>
+                                        <strong>ESSENTIAL FOCUS QUESTION / ETHICAL DILEMMA:</strong>
+                                        <p style="font-weight: 700; color: var(--text-main); margin-top: 0.25rem;">"Is taking extreme physical danger necessary to prove one's personal worth and true courage?"</p>
+                                        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.25rem;">Introduce the ethical dilemma connecting Gladys's high standards of bravery with modern human risk-taking.</p>
+                                    </div>
+                                </div>
+
+                                <!-- 2. CONTEXT & STUDENT-LED RECAP -->
+                                <div class="novel-lp-card">
+                                    <div class="novel-lp-title">
+                                        <span>2. CONTEXT & STUDENT-LED RECAP</span>
+                                        <span class="badge-success">Target Time: 5 Mins</span>
+                                    </div>
+                                    <div>
+                                        <strong>RECAP METHOD & KEY EVENTS:</strong>
+                                        <p style="margin-top: 0.25rem;">Pair-Share Timeline: Students map Malone's trajectory from rejected suitor ➔ eager reporter with McArdle ➔ deceiver at the Savage Club ➔ visitor entering Kensington.</p>
+                                    </div>
+                                    <div style="margin-top: 0.65rem;">
+                                        <strong>TARGET VOCABULARY / KEY TERMS (3–4 WORDS):</strong>
+                                        <p style="margin-top: 0.25rem;"><strong>1. Zoologist:</strong> Scientist studying animal life and classification. | <strong>2. Assignment:</strong> A specific, often perilous journalistic task. | <strong>3. Deception:</strong> Using false pretenses to bypass obstacles. | <strong>4. Evolution:</strong> The scientific theory of species adaptation.</p>
+                                    </div>
+                                </div>
+
+                                <!-- 3. ACTIVE EXPLORATION & ANALYTICAL READING -->
+                                <div class="novel-lp-card">
+                                    <div class="novel-lp-title">
+                                        <span>3. ACTIVE EXPLORATION & ANALYTICAL READING</span>
+                                        <span class="badge-success">Target Time: 20 Mins</span>
+                                    </div>
+                                    <div>
+                                        <strong>ANALYTICAL READING LENS:</strong>
+                                        <p style="margin-top: 0.25rem;">Track character motives (Malone's romantic vs. career ambition) and map the mounting suspense leading to Challenger's confrontation.</p>
+                                    </div>
+                                    <div style="margin-top: 0.65rem;">
+                                        <strong>READING FORMAT:</strong>
+                                        <p style="margin-top: 0.25rem;">Guided TTS audio read-aloud accompanied by interactive paragraph-chunking and partner note-taking.</p>
+                                    </div>
+                                    <div style="margin-top: 0.65rem;">
+                                        <strong>SCAFFOLDING & TEXT-DEPENDENT DISCUSSION QUESTIONS (Bloom's: Analyze / Evaluate):</strong>
+                                        <ul style="margin-left: 1.25rem; margin-top: 0.25rem;">
+                                            <li><em>Analyze:</em> What does McArdle's reaction reveal about Malone's attitude compared to sensible society?</li>
+                                            <li><em>Evaluate:</em> Was Malone ethically justified in falsifying his identity in his letter to Challenger?</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- 4. SYNTHESIS & CRITICAL REACTION -->
+                                <div class="novel-lp-card">
+                                    <div class="novel-lp-title">
+                                        <span>4. SYNTHESIS & CRITICAL REACTION</span>
+                                        <span class="badge-success">Target Time: 10 Mins</span>
+                                    </div>
+                                    <div>
+                                        <strong>STUDENT PRODUCT / REACTION ACTIVITY:</strong>
+                                        <p style="margin-top: 0.25rem;"><strong>JRE Graphic Organizer & Mini-Debate:</strong> Students write a JRE response justifying whether Gladys is a positive or destructive catalyst in Malone's life, followed by a 4-minute structured stand-up debate.</p>
+                                    </div>
+                                </div>
+
+                                <!-- 5. BRIDGE & FORESHADOWING -->
+                                <div class="novel-lp-card">
+                                    <div class="novel-lp-title">
+                                        <span>5. BRIDGE & FORESHADOWING</span>
+                                        <span class="badge-success">Target Time: 5 Mins</span>
+                                    </div>
+                                    <div>
+                                        <strong>CLIFFHANGER / PREDICTION TASK:</strong>
+                                        <p style="margin-top: 0.25rem;">"Challenger has uncovered Malone's superficial understanding in writing. How will the volatile Professor react once Malone speaks in his study, and how will Malone prevent himself from being thrown out?"</p>
+                                    </div>
+                                </div>
+
+                                <!-- POST-LESSON REFLECTION & QUALITY CHECKLIST -->
+                                <div class="card" style="background: var(--bg-alt); border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; margin-top: 1.25rem;">
+                                    <h4 style="color: var(--text-main); font-weight: 800; margin-bottom: 0.75rem;"><i class="fa-solid fa-list-check"></i> Post-Lesson Teacher Reflection & Quality Checklist</h4>
+                                    <div class="novel-checklist-item" onclick="toggleNovelChecklistItem(this)">
+                                        <input type="checkbox"> <span>Were students actively citing evidence from the text?</span>
+                                    </div>
+                                    <div class="novel-checklist-item" onclick="toggleNovelChecklistItem(this)">
+                                        <input type="checkbox"> <span>Was the pacing appropriate for the chapter length?</span>
+                                    </div>
+                                    <div class="novel-checklist-item" onclick="toggleNovelChecklistItem(this)">
+                                        <input type="checkbox"> <span>Did all students participate in the synthesis task?</span>
+                                    </div>
+                                    <div style="margin-top: 0.75rem;">
+                                        <strong>Key adjustments needed for next lesson:</strong>
+                                        <input type="text" placeholder="Add brief notes on pacing, vocabulary retention, or grouping..." style="width: 100%; font-size: 0.95rem; padding: 0.5rem 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-top: 0.35rem;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="brand-logo">
+                    <i class="fa-solid fa-book-atlas"></i>
+                </div>
+                <div>
+                    <h3>Egyptian Baccalaureate 2026/2027</h3>
+                    <p class="text-sm text-muted">Ministry of Education & Technical Education • General English Supervision</p>
+                </div>
+            </div>
+            <div class="footer-links">
+                <a href="javascript:void(0)" onclick="switchMasterTab(0)">Tab 1: Introduction & Vision</a>
+                <a href="javascript:void(0)" onclick="switchMasterTab(1)">Tab 2: Lesson Planning</a>
+                <a href="javascript:void(0)" onclick="switchMasterTab(2)">Tab 3: Teaching the Novel</a>
+            </div>
+            <div class="footer-copy">
+                &copy; 2026/2027 Egyptian Baccalaureate Teacher Professional Development Hub. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Main JavaScript Logic -->
+    <script src="script.js"></script>
+</body>
+</html>
